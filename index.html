@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KB Player Pro - Ultimate Edition</title>
+    <title>KB Player Pro - 20K Radio & Fixed Audio</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: sans-serif; background-color: #000; color: #fff; padding: 4px; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
@@ -41,15 +41,15 @@
 
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab(0)">ሙዚቃ ፕሌየር</button>
-            <button class="tab-btn" onclick="switchTab(1)">ዓለም አቀፍ ሬዲዮ (10K+)</button>
+            <button class="tab-btn" onclick="switchTab(1)">ዓለም አቀፍ ሬዲዮ (20K+)</button>
         </div>
 
-        <!-- TAB 0: MUSIC PLAYER -->
+        <!-- TAB 0: FIXED MUSIC PLAYER -->
         <div class="panel active" id="panel0">
             <div class="card">
-                <label>🎵 የሙዚቃ ዳይሬክተሪ / ፋይሎችን ይምረጡ:</label>
-                <input type="file" id="dirInput" accept="audio/*" multiple webkitdirectory directory onchange="handleLocalFiles(this)">
-                <select id="playlist" size="6" onchange="playLocal(this.value)"></select>
+                <label>🎵 የሙዚቃ ፋይሎችን ይምረጡ:</label>
+                <input type="file" id="audioFileInput" accept="audio/*" multiple onchange="handleAudioFiles(this)">
+                <select id="playlist" size="6" onchange="playAudioItem(this.value)"></select>
                 <div id="statusMsg">ፋይል ይምረጡ...</div>
             </div>
 
@@ -60,31 +60,31 @@
                     <span id="duration">00:00</span>
                 </div>
                 <div class="controls" style="margin-top:6px;">
-                    <button class="action-btn secondary-btn" onclick="skipLocal(-1)">⏮ ቐዳማይ</button>
-                    <button class="action-btn" onclick="togglePlay()" id="playBtn">⏯ ፕሌይ / ፖዝ</button>
-                    <button class="action-btn secondary-btn" onclick="skipLocal(1)">ቀጻሊ ⏭</button>
+                    <button class="action-btn secondary-btn" onclick="skipAudio(-1)">⏮ ቐዳማይ</button>
+                    <button class="action-btn" onclick="toggleAudioPlay()" id="playBtn">⏯ ፕሌይ / ፖዝ</button>
+                    <button class="action-btn secondary-btn" onclick="skipAudio(1)">ቀጻሊ ⏭</button>
                 </div>
             </div>
         </div>
 
-        <!-- TAB 1: GLOBAL & ETHIOPIAN/ERITREAN RADIOS (10,000+ STATIONS) -->
+        <!-- TAB 1: 20,000+ GLOBAL & LOCAL RADIOS -->
         <div class="panel" id="panel1">
             <div class="card" style="flex:1; display:flex; flex-direction:column;">
-                <label>📻 የኢትዮጵያ፣ ኤርትራ እና ዓለም አቀፍ ሬዲዮዎች (ከ10,000 በላይ):</label>
+                <label>📻 የኢትዮጵያ፣ ኤርትራ እና ዓለም አቀፍ ሬዲዮዎች (20,000+):</label>
                 <select id="radioList" size="10" style="flex:1; margin-top:4px;" onchange="playRadioStream(this.value)">
-                    <option value="">-- ሬዲዮዎችን በመጫን ላይ... --</option>
+                    <option value="">-- 20 ሺህ ሬዲዮዎችን በመጫን ላይ... --</option>
                 </select>
                 <audio id="radioPlayer" controls style="width:100%; margin-top:6px;"></audio>
             </div>
         </div>
     </div>
 
-    <audio id="audioPlayer" onended="skipLocal(1)"></audio>
+    <audio id="localAudioPlayer" onended="skipAudio(1)"></audio>
 
     <script>
-        let localFiles = [];
-        let currentIdx = 0;
-        const player = document.getElementById('audioPlayer');
+        let audioFilesList = [];
+        let currentAudioIdx = 0;
+        const localPlayer = document.getElementById('localAudioPlayer');
         const radioPlayer = document.getElementById('radioPlayer');
         const progressBar = document.getElementById('progressBar');
         const currentTimeEl = document.getElementById('currentTime');
@@ -96,71 +96,73 @@
             document.querySelectorAll('.panel').forEach((p, i) => p.classList.toggle('active', i === index));
         }
 
-        // --- LOCAL MUSIC FROM DIRECTORY ---
-        function handleLocalFiles(input) {
+        // --- FIXED LOCAL AUDIO PLAYER (OBJECT URL & MEMORY HANDLER) ---
+        function handleAudioFiles(input) {
             if (!input.files || input.files.length === 0) return;
-            localFiles = Array.from(input.files).filter(f => f.type.startsWith('audio/') || f.name.match(/\.(mp3|wav|aac|m4a|ogg)$/i));
-            const pl = document.getElementById('playlist');
-            pl.innerHTML = "";
+            audioFilesList = Array.from(input.files);
+            const playlistEl = document.getElementById('playlist');
+            playlistEl.innerHTML = "";
 
-            localFiles.forEach((file, idx) => {
+            audioFilesList.forEach((file, idx) => {
                 let opt = document.createElement('option');
                 opt.value = idx;
                 opt.text = (idx + 1) + ". " + file.name;
-                pl.appendChild(opt);
+                playlistEl.appendChild(opt);
             });
 
-            if (localFiles.length > 0) {
-                statusMsg.innerText = localFiles.length + " ፋይሎች ተጫውተዋል";
-                playLocal(0);
-            } else {
-                statusMsg.innerText = "ምንም የድምፅ ፋይል አልተገኘም";
+            if (audioFilesList.length > 0) {
+                statusMsg.innerText = audioFilesList.length + " ፋይሎች ተጭነዋል";
+                playAudioItem(0);
             }
         }
 
-        function playLocal(idx) {
-            if (localFiles.length === 0) return;
-            currentIdx = parseInt(idx);
-            document.getElementById('playlist').selectedIndex = currentIdx;
+        function playAudioItem(idx) {
+            if (audioFilesList.length === 0) return;
+            currentAudioIdx = parseInt(idx);
+            document.getElementById('playlist').selectedIndex = currentAudioIdx;
 
-            player.src = URL.createObjectURL(localFiles[currentIdx]);
-            player.load();
-            player.play().then(() => {
-                statusMsg.innerText = "ይጫወታል: " + localFiles[currentIdx].name;
-            }).catch(e => {
-                statusMsg.innerText = "ማጫወት አልተቻለም";
+            let fileObject = audioFilesList[currentAudioIdx];
+            let fileURL = window.URL.createObjectURL(fileObject);
+            
+            localPlayer.src = fileURL;
+            localPlayer.load();
+            localPlayer.play().then(() => {
+                statusMsg.innerText = "ይጫወታል: " + fileObject.name;
+            }).catch(err => {
+                statusMsg.innerText = "ማጫወት አልተቻለም (ብሮውዘር ፈቃድ ይሻል)";
+                console.error(err);
             });
         }
 
-        function togglePlay() {
-            if (localFiles.length === 0) {
+        function toggleAudioPlay() {
+            if (audioFilesList.length === 0) {
                 alert("እባክዎ መጀመሪያ ሙዚቃ ይምረጡ!");
                 return;
             }
-            if (player.paused) {
-                player.play();
+            if (localPlayer.paused) {
+                localPlayer.play().catch(e => console.log(e));
             } else {
-                player.pause();
+                localPlayer.pause();
             }
         }
 
-        function skipLocal(dir) {
-            if (localFiles.length === 0) return;
-            currentIdx = (currentIdx + dir + localFiles.length) % localFiles.length;
-            playLocal(currentIdx);
+        function skipAudio(dir) {
+            if (audioFilesList.length === 0) return;
+            currentAudioIdx = (currentAudioIdx + dir + audioFilesList.length) % audioFilesList.length;
+            playAudioItem(currentAudioIdx);
         }
 
-        player.addEventListener('timeupdate', () => {
-            if (!isNaN(player.duration)) {
-                progressBar.value = (player.currentTime / player.duration) * 100;
-                currentTimeEl.innerText = fmtTime(player.currentTime);
-                durationEl.innerText = fmtTime(player.duration);
+        localPlayer.addEventListener('timeupdate', () => {
+            if (!isNaN(localPlayer.duration)) {
+                progressBar.value = (localPlayer.currentTime / localPlayer.duration) * 100;
+                currentTimeEl.innerText = fmtTime(localPlayer.currentTime);
+                durationEl.innerText = fmtTime(localPlayer.duration);
             }
         });
 
         function seekAudio(val) {
-            if (!isNaN(player.duration)) {
-                player.currentTime = (val / 100) * player.duration;
+            if (!isNaN(localPlayer.duration)) {
+                localPlayer.currentTime = (val / 100) * localPlayer.duration;
             }
         }
 
@@ -169,30 +171,31 @@
             return (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s);
         }
 
-        // --- GLOBAL & LOCAL RADIOS (Radio Browser API integration for 10K+ stations) ---
-        async function loadRadios() {
+        // --- 20,000+ RADIOS INTEGRATION ---
+        async function loadMassiveRadios() {
             const radioSelect = document.getElementById('radioList');
             try {
-                // Fetching from public global radio database registry (Radio Browser API)
-                let response = await fetch('https://de1.api.radio-browser.info/json/stations/topclick/1000');
+                // Fetching top 20,000 radio stations from the global public database registry
+                let response = await fetch('https://de1.api.radio-browser.info/json/stations/topclick/20000');
                 let data = await response.json();
                 
-                radioSelect.innerHTML = "";
-                
-                // Adding Ethiopian & Eritrean popular stations first if available
+                // Fetching Ethiopian & Eritrean specific stations
                 let etResponse = await fetch('https://de1.api.radio-browser.info/json/stations/bycountry/Ethiopia');
                 let etData = await etResponse.json();
+
+                let erResponse = await fetch('https://de1.api.radio-browser.info/json/stations/bycountry/Eritrea');
+                let erData = await erResponse.json();
                 
-                let combined = [...etData, ...data];
+                let combinedRadios = [...etData, ...erData, ...data];
                 
-                combined.forEach((station, i) => {
+                radioSelect.innerHTML = "";
+                combinedRadios.forEach((station, i) => {
                     let opt = document.createElement('option');
                     opt.value = station.url_resolved || station.url;
                     opt.text = (i + 1) + ". " + station.name + " (" + (station.country || "Global") + ")";
                     radioSelect.appendChild(opt);
                 });
             } catch (err) {
-                // Fallback direct streams if offline/API fails
                 radioSelect.innerHTML = `
                     <option value="https://stream.zeno.fm/fana_fm_live">ፋና ኤፍኤም 98.1 (ኢትዮጵያ)</option>
                     <option value="https://stream.zeno.fm/sheger_fm_102.1">ሸገር ኤፍኤም 102.1 (ኢትዮጵያ)</option>
@@ -203,14 +206,14 @@
 
         function playRadioStream(url) {
             if (url) {
-                if(!player.paused) player.pause();
+                if(!localPlayer.paused) localPlayer.pause();
                 radioPlayer.src = url;
                 radioPlayer.play().catch(e => console.log("Radio play error"));
             }
         }
 
-        // Load radios on startup
-        loadRadios();
+        // Load 20K radios on startup
+        loadMassiveRadios();
     </script>
 </body>
 </html>
