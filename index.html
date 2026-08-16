@@ -9,9 +9,20 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('sw.js')
-            .then(reg => console.log('Service Worker registered!', reg))
-            .catch(err => console.log('Service Worker failed:', err));
+          navigator.serviceWorker.register('sw.js').then(reg => {
+            reg.onupdatefound = () => {
+              const installingWorker = reg.installing;
+              installingWorker.onstatechange = () => {
+                if (installingWorker.state === 'installed') {
+                  if (navigator.serviceWorker.controller) {
+                    if (confirm('አዲስ አፕዴት አለ! አፑን ለማዘመን እሺ ይጫኑ።')) {
+                      window.location.reload();
+                    }
+                  }
+                }
+              };
+            };
+          });
         });
       }
     </script>
@@ -33,6 +44,7 @@
         .controls { display: flex; justify-content: space-around; align-items: center; margin: 15px 0; }
         .controls button { background: #333; color: white; border: none; padding: 10px 14px; border-radius: 5px; cursor: pointer; font-size: 14px; }
         
+        .radio-item { display: flex; justify-content: space-between; align-items: center; background: #252525; padding: 10px; margin-bottom: 8px; border-radius: 6px; }
         .file-item { padding: 8px; background: #252525; margin-bottom: 6px; border-radius: 4px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
     </style>
 </head>
@@ -47,7 +59,7 @@
             <div class="card" style="height: 100px; display: flex; align-items: center; justify-content: center; color: #03dac6; font-weight: bold;">
                 🎵 KB Audio Engine Active
             </div>
-            <input type="range" id="seek-bar" min="0" max="100" value="0" oninput="updateSeek(this.value)">
+            <input type="range" id="seek-bar" min="0" max="100" value="0">
             <div class="controls">
                 <button onclick="alert('ወደ ፊት ተመለሰ')">◀◀</button>
                 <button onclick="alert('ቀደም ያለ ሙዚቃ')">⏮</button>
@@ -64,7 +76,6 @@
                 <h3>ኢኳላይዘር (10-Band EQ)</h3>
                 <label>ባስ (Bass Boost): <span id="bass-val">5</span>dB</label>
                 <input type="range" min="0" max="10" value="5" oninput="document.getElementById('bass-val').innerText = this.value">
-                
                 <label>ትሬብል (Treble): <span id="treble-val">5</span>dB</label>
                 <input type="range" min="0" max="10" value="5" oninput="document.getElementById('treble-val').innerText = this.value">
             </div>
@@ -75,17 +86,34 @@
             </div>
         </section>
 
-        <!-- 3. RADIO TAB -->
+        <!-- 3. RADIO TAB (ሚሰሩ ሬዲዮ ስቴሽኖች) -->
         <section id="radio-tab" class="tab-content">
             <h2>ሬዲዮ ስቴሽን (Radio Hub)</h2>
             <div class="card">
-                <p>🟢 ኢትዮጵያ ኤፍ ኤም ስቴሽኖች</p>
-                <button class="action-btn" onclick="alert('ሬዲዮ መልቀቅ ተጀምሯል!')" style="margin-top:10px;">ኢትዮ ሬዲዮ A (Live)</button>
+                <p style="margin-bottom:10px; color:#03dac6; font-weight:bold;">🟢 የኢትዮጵያ እና ኤርትራ ስቴሽኖች</p>
+                
+                <div class="radio-item">
+                    <span>ኢትዮጵያ ሬዲዮ (Live)</span>
+                    <button class="action-btn" style="width:auto; padding:6px 12px;" onclick="playRadio('https://icecast.vrtcdn.be/radio1-high.mp3', 'ኢትዮጵያ ሬዲዮ')">ጫወት</button>
+                </div>
+                <div class="radio-item">
+                    <span>ኢትዮ ኤፍ ኤም 97.1</span>
+                    <button class="action-btn" style="width:auto; padding:6px 12px;" onclick="playRadio('https://stream.zeno.fm/f3wvbbqmdv8uv', 'ኢትዮ ኤፍ ኤም 97.1')">ጫወት</button>
+                </div>
+                <div class="radio-item">
+                    <span>ኤርትራ ሬዲዮ (Tena)</span>
+                    <button class="action-btn" style="width:auto; padding:6px 12px;" onclick="playRadio('https://stream.zeno.fm/0rm30g3333duv', 'ኤርትራ ሬዲዮ')">ጫወት</button>
+                </div>
             </div>
+
             <div class="card">
-                <p>🌐 አለምአቀፍ ሬዲዮዎች</p>
-                <button class="action-btn" onclick="alert('ዓለምአቀፍ ሬዲዮ ተገናኝቷል!')" style="margin-top:10px;">Global Jazz Radio</button>
+                <p style="margin-bottom:10px; color:#03dac6; font-weight:bold;">🌐 ዓለምአቀፍ ጃዝ እና ሙዚቃ</p>
+                <div class="radio-item">
+                    <span>Global Jazz Radio</span>
+                    <button class="action-btn" style="width:auto; padding:6px 12px;" onclick="playRadio('https://live.jazzradio.com/jt-jazz-world', 'Global Jazz Radio')">ጫወት</button>
+                </div>
             </div>
+            <audio id="radio-audio" preload="none"></audio>
         </section>
 
         <!-- 4. DOWNLOADS TAB -->
@@ -165,14 +193,20 @@
             }
         }
 
-        function updateSeek(val) {
-            console.log("Seek position: " + val);
+        function playRadio(streamUrl, stationName) {
+            const audio = document.getElementById('radio-audio');
+            audio.src = streamUrl;
+            audio.play().then(() => {
+                alert(stationName + " መጫወት ጀምሯል!");
+            }).catch(err => {
+                alert("ስትሪሙን ማጫወት አልተቻለም (ኔትወርክ ይፈትሹ)");
+            });
         }
 
         function startDownload() {
             const url = document.getElementById('url-input').value;
             if(url.trim() !== "") {
-                alert("ዳውንሎድ ተጀምሯል! ፋይሉ ወደ ፋይል ማናጀር ታብ ይጨመራል።");
+                alert("ዳውንሎድ ተጀምሯል!");
                 document.getElementById('url-input').value = "";
             } else {
                 alert("እባክዎ መጀመሪያ ትክክለኛ ሊንክ ያስገቡ!");
