@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kb-player-v7';
+const CACHE_NAME = 'kb-player-v8';
 const urlsToCache = [
   './index.html',
   './manifest.json',
