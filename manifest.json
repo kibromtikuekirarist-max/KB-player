@@ -1,7 +1,7 @@
 {
   "name": "KB Player Pro",
   "short_name": "KB-Player",
-  "start_url": "./index.html?v=2.0",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#121212",
