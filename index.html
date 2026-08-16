@@ -1,238 +1,26 @@
 <!DOCTYPE html>
-<html lang="am" dir="ltr">
+<html lang="am">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KB Player Pro</title>
-    
-    <!-- PWA Manifest & Theme -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#1DB954">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="KB Player Pro">
-
-    <style>
-        :root {
-            --bg-color: #121212;
-            --card-bg: #181818;
-            --accent-color: #1DB954;
-            --text-color: #FFFFFF;
-            --text-secondary: #B3B3B3;
-        }
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            padding: 15px;
-        }
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #282828;
-        }
-        h1 {
-            font-size: 1.3rem;
-            color: var(--accent-color);
-        }
-        #install-btn {
-            background-color: var(--accent-color);
-            color: #000;
-            border: none;
-            padding: 8px 14px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            border-radius: 20px;
-            cursor: pointer;
-            display: none;
-        }
-        /* Tabs Navigation */
-        .tabs-container {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-            white-space: nowrap;
-        }
-        .tab-btn {
-            background: #282828;
-            color: var(--text-secondary);
-            border: none;
-            padding: 8px 14px;
-            border-radius: 16px;
-            font-size: 0.9rem;
-            cursor: pointer;
-        }
-        .tab-btn.active {
-            background: var(--accent-color);
-            color: #000;
-            font-weight: bold;
-        }
-        /* Content Sections */
-        .section-content {
-            display: none;
-            flex: 1;
-        }
-        .section-content.active {
-            display: block;
-        }
-        .player-card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-        }
-        .track-info {
-            margin: 20px 0;
-        }
-        .track-title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .track-artist {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        button.control-btn {
-            background: #282828;
-            color: white;
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            font-size: 1.2rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        button.control-btn:active {
-            background: var(--accent-color);
-        }
-        .panel-box {
-            background: var(--card-bg);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            color: var(--text-secondary);
-        }
-    </style>
 </head>
 <body>
-
-    <header>
-        <h1>KB Player Pro</h1>
-        <button id="install-btn">Install App</button>
-    </header>
-
-    <!-- ታቦች (Tabs) -->
-    <div class="tabs-container">
-        <button class="tab-btn active" onclick="switchTab(event, 'player-section')">ፕሌየር</button>
-        <button class="tab-btn" onclick="switchTab(event, 'stems-section')">ስታም/EQ</button>
-        <button class="tab-btn" onclick="switchTab(event, 'radio-section')">ሬዲዮ</button>
-        <button class="tab-btn" onclick="switchTab(event, 'about-section')">ስለ ሰሪው</button>
-    </div>
-
-    <!-- 1. ፕሌየር ሴክሽን -->
-    <div id="player-section" class="section-content active">
-        <div class="player-card">
-            <div class="track-info">
-                <div class="track-title">ክራር ሙዚቃ እና ዜማዎች</div>
-                <div class="track-artist">KB Player Pro - Audio System</div>
-            </div>
-            <div class="controls">
-                <button class="control-btn" aria-label="ቀድመው የነበረ">⏮</button>
-                <button class="control-btn" aria-label="አጫውት/ አቁም" style="background: var(--accent-color); color: #000;">▶</button>
-                <button class="control-btn" aria-label="ቀጣይ">⏭</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 2. ስታም/EQ ሴክሽን -->
-    <div id="stems-section" class="section-content">
-        <div class="panel-box">
-            <h3>የድምፅ እና ስታም ማስተካከያ</h3>
-            <p>እዚህ ጋር የድምፅ ማስተካከያ (Audio Pads & Stems) ቅንብሮች ይኖራሉ።</p>
-        </div>
-    </div>
-
-    <!-- 3. ሬዲዮ ሴክሽን -->
-    <div id="radio-section" class="section-content">
-        <div class="panel-box">
-            <h3>የኢትዮጵያ እና ኤርትራ ሬዲዮ ስርጭቶች</h3>
-            <p>የኦንላይን ሬዲዮ ማዳመጫ ዝርዝር እዚህ ይገኛል።</p>
-        </div>
-    </div>
-
-    <!-- 4. ስለ ሰሪው ሴክሽን -->
-    <div id="about-section" class="section-content">
-        <div class="panel-box">
-            <h3>ስለ ሰሪው (ክራሪስት ክብሮም)</h3>
-            <p>ይህ አፕሊኬሽን ለሙዚቃ አፍቃሪዎች እና ለብላይንድ ማህበረሰብ ተደራሽ እንዲሆን የተሰራ ፕሮጀክት ነው።</p>
-        </div>
-    </div>
-
-    <!-- JavaScript for Tabs & PWA Install -->
+    <h1>KB Player Pro</h1>
+    <button id="install-btn" style="display:none; padding:10px; background:green; color:white;">Install App</button>
+    <div id="player-content">ሙዚቃ ማጫወቻው ክፍል እዚህ አለ</div>
+    
     <script>
-        // ታቦችን ለመቀያየር የሚያስችል ሎጂክ
-        function switchTab(evt, sectionId) {
-            const sections = document.querySelectorAll('.section-content');
-            sections.forEach(sec => sec.classList.remove('active'));
-
-            const buttons = document.querySelectorAll('.tab-btn');
-            buttons.forEach(btn => btn.classList.remove('active'));
-
-            document.getElementById(sectionId).classList.add('active');
-            evt.currentTarget.classList.add('active');
-        }
-
-        // PWA Install Prompt Logic
-        let deferredPrompt;
-        const installBtn = document.getElementById('install-btn');
-
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
-            deferredPrompt = e;
-            installBtn.style.display = 'block';
-
-            installBtn.addEventListener('click', () => {
-                installBtn.style.display = 'none';
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        console.log('አፑ ተጭኗል');
-                    }
-                    deferredPrompt = null;
-                });
-            });
+            const btn = document.getElementById('install-btn');
+            btn.style.display = 'block';
+            btn.addEventListener('click', () => e.prompt());
         });
-
-        // Service Worker መመዝገቢያ
+        
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .catch((err) => console.log('SW registration failed:', err));
-            });
+            navigator.serviceWorker.register('sw.js');
         }
     </script>
 </body>
