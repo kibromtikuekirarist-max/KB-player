@@ -1,0 +1,8 @@
+{
+  "name": "KB Player Pro",
+  "short_name": "KB Player",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#1DB954"
+}
