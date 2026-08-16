@@ -5,32 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KB Player Pro</title>
     <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#03dac6">
     <script>
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js');
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js')
+            .then(reg => console.log('Service Worker registered!', reg))
+            .catch(err => console.log('Service Worker failed:', err));
+        });
       }
     </script>
     <style>
         body { font-family: sans-serif; margin: 0; background: #121212; color: #ffffff; padding-bottom: 70px; }
-        .tab-content { display: none; padding: 20px; }
+        .tab-content { display: none; padding: 15px; }
         .tab-content.active { display: block; }
         
-        /* Bottom Navigation */
-        #bottom-nav { position: fixed; bottom: 0; width: 100%; display: flex; background: #1f1f1f; border-top: 1px solid #333; z-index: 1000; }
-        #bottom-nav button { flex: 1; padding: 12px 5px; color: #aaa; background: none; border: none; font-size: 11px; cursor: pointer; }
+        #bottom-nav { position: fixed; bottom: 0; width: 100%; display: flex; background: #1f1f1f; border-top: 1px solid #333; z-index: 1000; box-sizing: border-box; }
+        #bottom-nav button { flex: 1; padding: 10px 2px; color: #aaa; background: none; border: none; font-size: 10px; cursor: pointer; text-align: center; }
         #bottom-nav button.active-btn { color: #03dac6; font-weight: bold; }
 
-        /* UI Components */
-        .card { background: #1e1e1e; padding: 15px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #333; }
-        input, select { width: 100%; padding: 10px; margin: 8px 0; background: #2c2c2c; border: 1px solid #444; color: white; border-radius: 5px; box-sizing: border-box; }
-        button.action-btn { width: 100%; padding: 12px; background: #03dac6; border: none; color: black; font-weight: bold; border-radius: 5px; cursor: pointer; margin-top: 5px; }
+        .card { background: #1e1e1e; padding: 15px; margin-bottom: 12px; border-radius: 8px; border: 1px solid #333; }
+        input, select { width: 100%; padding: 10px; margin: 6px 0 12px 0; background: #2c2c2c; border: 1px solid #444; color: white; border-radius: 5px; box-sizing: border-box; }
+        button.action-btn { width: 100%; padding: 12px; background: #03dac6; border: none; color: black; font-weight: bold; border-radius: 5px; cursor: pointer; }
+        button.action-btn:active { background: #02b3a2; }
         
-        .analyzer-bar { background: #1a1a1a; padding: 8px; border-radius: 5px; font-family: monospace; color: #03dac6; margin-bottom: 10px; text-align: center; }
+        .analyzer-bar { background: #1a1a1a; padding: 10px; border-radius: 5px; font-family: monospace; color: #03dac6; margin-bottom: 10px; text-align: center; font-size: 14px; }
         .controls { display: flex; justify-content: space-around; align-items: center; margin: 15px 0; }
-        .controls button { background: #333; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; }
+        .controls button { background: #333; color: white; border: none; padding: 10px 14px; border-radius: 5px; cursor: pointer; font-size: 14px; }
         
-        /* Mini Player */
-        #mini-player { position: fixed; bottom: 50px; width: 100%; background: #181818; padding: 8px 15px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #282828; box-sizing: border-box; font-size: 13px; }
+        .file-item { padding: 8px; background: #252525; margin-bottom: 6px; border-radius: 4px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
     </style>
 </head>
 <body>
@@ -40,28 +43,35 @@
         <!-- 1. PLAYER TAB -->
         <section id="player-tab" class="tab-content active">
             <h2>ማጫወቻ (Player)</h2>
-            <div class="analyzer-bar">BPM: <span id="bpm">120</span> | Key: <span id="key">Am</span></div>
-            <div class="card" style="height: 120px; display: flex; align-items: center; justify-content: center; color: #777;">Waveform Visualizer</div>
-            <input type="range" id="seek-bar" min="0" max="100" value="0">
+            <div class="analyzer-bar">BPM: <span id="bpm-val">120</span> | Key: <span id="key-val">Am</span></div>
+            <div class="card" style="height: 100px; display: flex; align-items: center; justify-content: center; color: #03dac6; font-weight: bold;">
+                🎵 KB Audio Engine Active
+            </div>
+            <input type="range" id="seek-bar" min="0" max="100" value="0" oninput="updateSeek(this.value)">
             <div class="controls">
-                <button>◀◀</button>
-                <button>⏮</button>
-                <button id="play-pause" style="background:#03dac6; color:black; font-weight:bold;">PLAY</button>
-                <button>⏭</button>
-                <button>▶▶</button>
+                <button onclick="alert('ወደ ፊት ተመለሰ')">◀◀</button>
+                <button onclick="alert('ቀደም ያለ ሙዚቃ')">⏮</button>
+                <button id="play-pause-btn" onclick="togglePlay()" style="background:#03dac6; color:black; font-weight:bold; padding: 12px 20px;">PLAY</button>
+                <button onclick="alert('ቀጣይ ሙዚቃ')">⏭</button>
+                <button onclick="alert('ወደ ፊት አለፈ')">▶▶</button>
             </div>
         </section>
 
         <!-- 2. MUSICIAN'S HUB (SOUND LAB) -->
         <section id="musician-hub" class="tab-content">
-            <h2>የሙዚቀኞች ማዕከል (Sound Lab)</h2>
+            <h2>ሳውንድ ላብ (Sound Lab)</h2>
             <div class="card">
-                <h3>ኢኳላይዘር (EQ & Effects)</h3>
-                <p>10-Band Graphic EQ እና FX Rack (Reverb, Delay)</p>
+                <h3>ኢኳላይዘር (10-Band EQ)</h3>
+                <label>ባስ (Bass Boost): <span id="bass-val">5</span>dB</label>
+                <input type="range" min="0" max="10" value="5" oninput="document.getElementById('bass-val').innerText = this.value">
+                
+                <label>ትሬብል (Treble): <span id="treble-val">5</span>dB</label>
+                <input type="range" min="0" max="10" value="5" oninput="document.getElementById('treble-val').innerText = this.value">
             </div>
             <div class="card">
-                <label>አውቶ-ክሮስፌድ (Auto-Crossfade Sec):</label>
+                <label>አውቶ-ክሮስፌድ (Crossfade Seconds):</label>
                 <input type="number" id="crossfade" value="3">
+                <button class="action-btn" onclick="alert('የሳውንድ ቅንብሮች ተስተካክለዋል!')">ቅንብር አስቀምጥ</button>
             </div>
         </section>
 
@@ -69,26 +79,25 @@
         <section id="radio-tab" class="tab-content">
             <h2>ሬዲዮ ስቴሽን (Radio Hub)</h2>
             <div class="card">
-                <p>🟢 ኢትዮጵያ እና ኤርትራ ስቴሽኖች (በቀዳሚነት የተመረጡ)</p>
-                <p>🌐 አለምአቀፍ 15,000+ ንቁ ስቴሽኖች</p>
+                <p>🟢 ኢትዮጵያ ኤፍ ኤም ስቴሽኖች</p>
+                <button class="action-btn" onclick="alert('ሬዲዮ መልቀቅ ተጀምሯል!')" style="margin-top:10px;">ኢትዮ ሬዲዮ A (Live)</button>
+            </div>
+            <div class="card">
+                <p>🌐 አለምአቀፍ ሬዲዮዎች</p>
+                <button class="action-btn" onclick="alert('ዓለምአቀፍ ሬዲዮ ተገናኝቷል!')" style="margin-top:10px;">Global Jazz Radio</button>
             </div>
         </section>
 
         <!-- 4. DOWNLOADS TAB -->
         <section id="downloads-tab" class="tab-content">
-            <h2>ሶሻል ሚዲያ ማውረጃ (Downloader)</h2>
+            <h2>ሶሻል ሚዲያ ማውረጃ</h2>
             <div class="card">
                 <input type="text" id="url-input" placeholder="ሊንክ እዚህ ይለጥፉ (Paste URL)...">
-                <label>የኦዲዮ ፎርማት (Audio Format):</label>
+                <label>የኦዲዮ ፎርማት:</label>
                 <select id="audio-format">
                     <option>WAV (High Res - 96kHz)</option>
                     <option>FLAC (Lossless)</option>
                     <option>MP3 (320kbps)</option>
-                </select>
-                <label>የቪዲዮ ፎርማት (Video Format):</label>
-                <select id="video-format">
-                    <option>MP4 (4K / 1080p)</option>
-                    <option>Audio Extraction (ቪዲዮ ወደ ኦዲዮ)</option>
                 </select>
                 <button class="action-btn" onclick="startDownload()">አውርድ (Download)</button>
             </div>
@@ -96,10 +105,11 @@
 
         <!-- 5. FILES TAB -->
         <section id="files-tab" class="tab-content">
-            <h2>ፋይል ማናጀር (File Manager)</h2>
+            <h2>ፋይል ማናጀር</h2>
             <div class="card">
-                <p>📁 /storage/emulated/0/KivyPlayer/Downloads/</p>
-                <p style="color: gray;">ወረዱ ፋይሎች እና አቃፊዎች እዚህ ይዘረዘራሉ...</p>
+                <p style="font-size: 12px; color: #888;">📁 /storage/emulated/0/KivyPlayer/Downloads/</p>
+                <div class="file-item"><span>Melody_Mix_01.mp3</span> <span style="color:#03dac6;">3.2 MB</span></div>
+                <div class="file-item"><span>Krar_Live_Session.wav</span> <span style="color:#03dac6;">14.5 MB</span></div>
             </div>
         </section>
 
@@ -107,27 +117,16 @@
         <section id="settings-tab" class="tab-content">
             <h2>ቅንጅቶች (Settings)</h2>
             <div class="card">
-                <label>የቋንቋ ምርጫ (Language):</label>
-                <select>
+                <label>የቋንቋ ምርጫ:</label>
+                <select id="lang-select">
                     <option>አማርኛ (Amharic)</option>
                     <option>ትግርኛ (Tigrinya)</option>
-                    <option>ኦሮምኛ (Afaan Oromoo)</option>
                     <option>English</option>
                 </select>
-                <label style="margin-top:10px; display:block;">የአፕ ጭብጥ (Theme):</label>
-                <select>
-                    <option>ጠቆር ያለ (Dark Pro)</option>
-                    <option>ደማቅ (Light Mode)</option>
-                </select>
+                <button class="action-btn" onclick="alert('ቅንብሮቹ ተመዝግበዋል!')" style="margin-top: 10px;">ለውጦችን አድን</button>
             </div>
         </section>
 
-    </div>
-
-    <!-- Mini-Player Sticky Bar -->
-    <div id="mini-player">
-        <span id="now-playing-text">አሁን የሚጫወት የለም...</span>
-        <button style="background:none; border:none; color:#03dac6; cursor:pointer; font-weight:bold;">|| Pause</button>
     </div>
 
     <!-- Bottom Navigation Bar -->
@@ -137,7 +136,7 @@
         <button onclick="showTab('radio-tab', this)">ሬዲዮ</button>
         <button onclick="showTab('downloads-tab', this)">ዳውንሎድ</button>
         <button onclick="showTab('files-tab', this)">ፋይሎች</button>
-        <button onclick="showTab('settings-tab', this)"ቮ>ሴቲንግ</button>
+        <button onclick="showTab('settings-tab', this)">ሴቲንግ</button>
     </nav>
 
     <script>
@@ -153,12 +152,30 @@
             btnElement.classList.add('active-btn');
         }
 
+        let isPlaying = false;
+        function togglePlay() {
+            isPlaying = !isPlaying;
+            const btn = document.getElementById('play-pause-btn');
+            if(isPlaying) {
+                btn.innerText = "PAUSE";
+                btn.style.background = "#ff4444";
+            } else {
+                btn.innerText = "PLAY";
+                btn.style.background = "#03dac6";
+            }
+        }
+
+        function updateSeek(val) {
+            console.log("Seek position: " + val);
+        }
+
         function startDownload() {
             const url = document.getElementById('url-input').value;
             if(url.trim() !== "") {
-                alert("ዳውንሎድ ተጀምሯል! ፋይሉ ወደ ፋይል ማናጀር ይገባል።");
+                alert("ዳውንሎድ ተጀምሯል! ፋይሉ ወደ ፋይል ማናጀር ታብ ይጨመራል።");
+                document.getElementById('url-input').value = "";
             } else {
-                alert("እባክዎ መጀመሪያ ሊንክ ያስገቡ!");
+                alert("እባክዎ መጀመሪያ ትክክለኛ ሊንክ ያስገቡ!");
             }
         }
     </script>
