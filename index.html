@@ -15,7 +15,7 @@
               installingWorker.onstatechange = () => {
                 if (installingWorker.state === 'installed') {
                   if (navigator.serviceWorker.controller) {
-                    if (confirm('አዲስ አፕዴት አለ! አፑን ለማዘመን እሺ ይጫኑ።')) {
+                    if (confirm('አዲስ አፕዴት አለ! ለማዘመን እሺ ይጫኑ።')) {
                       window.location.reload();
                     }
                   }
@@ -44,7 +44,7 @@
         .controls { display: flex; justify-content: space-around; align-items: center; margin: 15px 0; }
         .controls button { background: #333; color: white; border: none; padding: 10px 14px; border-radius: 5px; cursor: pointer; font-size: 14px; }
         
-        .radio-item { display: flex; justify-content: space-between; align-items: center; background: #252525; padding: 10px; margin-bottom: 8px; border-radius: 6px; }
+        .radio-item { display: flex; justify-content: space-between; align-items: center; background: #252525; padding: 10px; margin-bottom: 8px; border-radius: 6px; font-size: 13px; }
         .file-item { padding: 8px; background: #252525; margin-bottom: 6px; border-radius: 4px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
     </style>
 </head>
@@ -57,7 +57,7 @@
             <h2>ማጫወቻ (Player)</h2>
             <div class="analyzer-bar">BPM: <span id="bpm-val">120</span> | Key: <span id="key-val">Am</span></div>
             <div class="card" style="height: 100px; display: flex; align-items: center; justify-content: center; color: #03dac6; font-weight: bold;">
-                🎵 KB Audio Engine Active
+                🎵 KB Audio Engine Pro Active
             </div>
             <input type="range" id="seek-bar" min="0" max="100" value="0">
             <div class="controls">
@@ -69,7 +69,7 @@
             </div>
         </section>
 
-        <!-- 2. MUSICIAN'S HUB (SOUND LAB) -->
+        <!-- 2. MUSICIAN'ْس HUB (SOUND LAB) -->
         <section id="musician-hub" class="tab-content">
             <h2>ሳውንድ ላብ (Sound Lab)</h2>
             <div class="card">
@@ -86,31 +86,47 @@
             </div>
         </section>
 
-        <!-- 3. RADIO TAB (ሚሰሩ ሬዲዮ ስቴሽኖች) -->
+        <!-- 3. RADIO TAB -->
         <section id="radio-tab" class="tab-content">
             <h2>ሬዲዮ ስቴሽን (Radio Hub)</h2>
+            
             <div class="card">
-                <p style="margin-bottom:10px; color:#03dac6; font-weight:bold;">🟢 የኢትዮጵያ እና ኤርትራ ስቴሽኖች</p>
-                
-                <div class="radio-item">
-                    <span>ኢትዮጵያ ሬዲዮ (Live)</span>
-                    <button class="action-btn" style="width:auto; padding:6px 12px;" onclick="playRadio('https://icecast.vrtcdn.be/radio1-high.mp3', 'ኢትዮጵያ ሬዲዮ')">ጫወት</button>
-                </div>
+                <p style="margin-bottom:10px; color:#03dac6; font-weight:bold;">🇪🇹 የኢትዮጵያ እና 🇪🇷 ኤርትራ ስቴሽኖች</p>
                 <div class="radio-item">
                     <span>ኢትዮ ኤፍ ኤም 97.1</span>
                     <button class="action-btn" style="width:auto; padding:6px 12px;" onclick="playRadio('https://stream.zeno.fm/f3wvbbqmdv8uv', 'ኢትዮ ኤፍ ኤም 97.1')">ጫወት</button>
                 </div>
                 <div class="radio-item">
+                    <span>ኢትዮጵያ ሬዲዮ ብሔራዊ</span>
+                    <button class="action-btn" style="width:auto; padding:6px 12px;" onclick="playRadio('https://icecast.vrtcdn.be/radio1-high.mp3', 'ኢትዮጵያ ሬዲዮ ብሔራዊ')">ጫወት</button>
+                </div>
+                <div class="radio-item">
                     <span>ኤርትራ ሬዲዮ (Tena)</span>
                     <button class="action-btn" style="width:auto; padding:6px 12px;" onclick="playRadio('https://stream.zeno.fm/0rm30g3333duv', 'ኤርትራ ሬዲዮ')">ጫወት</button>
+                </div>
+                <div class="radio-item">
+                    <span>አዲስ ኤፍ ኤም 96.3</span>
+                    <button class="action-btn" style="width:auto; padding:6px 12px;" onclick="playRadio('https://stream.zeno.fm/e27553vy4x8uv', 'አዲስ ኤፍ ኤም 96.3')">ጫወት</button>
+                </div>
+                <div class="radio-item">
+                    <span>Sheger FM 102.1</span>
+                    <button class="action-btn" style="width:auto; padding:6px 12px;" onclick="playRadio('https://stream.zeno.fm/7t5vbbqmdv8uv', 'Sheger FM 102.1')">ጫወት</button>
                 </div>
             </div>
 
             <div class="card">
-                <p style="margin-bottom:10px; color:#03dac6; font-weight:bold;">🌐 ዓለምአቀፍ ጃዝ እና ሙዚቃ</p>
+                <p style="margin-bottom:10px; color:#03dac6; font-weight:bold;">🌐 ዓለምአቀፍ ሬዲዮዎች (Global Hub)</p>
                 <div class="radio-item">
                     <span>Global Jazz Radio</span>
                     <button class="action-btn" style="width:auto; padding:6px 12px;" onclick="playRadio('https://live.jazzradio.com/jt-jazz-world', 'Global Jazz Radio')">ጫወት</button>
+                </div>
+                <div class="radio-item">
+                    <span>BBC World Service</span>
+                    <button class="action-btn" style="width:auto; padding:6px 12px;" onclick="playRadio('https://stream.live.vc.bbcmedia.co.uk/bbc_world_service', 'BBC World Service')">ጫወት</button>
+                </div>
+                <div class="radio-item">
+                    <span>Smooth Chill London</span>
+                    <button class="action-btn" style="width:auto; padding:6px 12px;" onclick="playRadio('https://media-ssl.musicradio.com/SmoothChill', 'Smooth Chill')">ጫወት</button>
                 </div>
             </div>
             <audio id="radio-audio" preload="none"></audio>
