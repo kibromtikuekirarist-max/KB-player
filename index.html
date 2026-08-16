@@ -14,28 +14,154 @@
         body { font-family: sans-serif; margin: 0; background: #121212; color: #ffffff; padding-bottom: 70px; }
         .tab-content { display: none; padding: 20px; }
         .tab-content.active { display: block; }
-        #bottom-nav { position: fixed; bottom: 0; width: 100%; display: flex; background: #1f1f1f; border-top: 1px solid #333; }
-        #bottom-nav button { flex: 1; padding: 12px; color: #aaa; background: none; border: none; font-size: 11px; }
+        
+        /* Bottom Navigation */
+        #bottom-nav { position: fixed; bottom: 0; width: 100%; display: flex; background: #1f1f1f; border-top: 1px solid #333; z-index: 1000; }
+        #bottom-nav button { flex: 1; padding: 12px 5px; color: #aaa; background: none; border: none; font-size: 11px; cursor: pointer; }
         #bottom-nav button.active-btn { color: #03dac6; font-weight: bold; }
+
+        /* UI Components */
+        .card { background: #1e1e1e; padding: 15px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #333; }
+        input, select { width: 100%; padding: 10px; margin: 8px 0; background: #2c2c2c; border: 1px solid #444; color: white; border-radius: 5px; box-sizing: border-box; }
+        button.action-btn { width: 100%; padding: 12px; background: #03dac6; border: none; color: black; font-weight: bold; border-radius: 5px; cursor: pointer; margin-top: 5px; }
+        
+        .analyzer-bar { background: #1a1a1a; padding: 8px; border-radius: 5px; font-family: monospace; color: #03dac6; margin-bottom: 10px; text-align: center; }
+        .controls { display: flex; justify-content: space-around; align-items: center; margin: 15px 0; }
+        .controls button { background: #333; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; }
+        
+        /* Mini Player */
+        #mini-player { position: fixed; bottom: 50px; width: 100%; background: #181818; padding: 8px 15px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #282828; box-sizing: border-box; font-size: 13px; }
     </style>
 </head>
 <body>
+
     <div id="app-container">
+
+        <!-- 1. PLAYER TAB -->
         <section id="player-tab" class="tab-content active">
             <h2>ማጫወቻ (Player)</h2>
-            <div style="background:#1a1a1a; padding:10px; color:#03dac6;">BPM: 120 | Key: Am</div>
+            <div class="analyzer-bar">BPM: <span id="bpm">120</span> | Key: <span id="key">Am</span></div>
+            <div class="card" style="height: 120px; display: flex; align-items: center; justify-content: center; color: #777;">Waveform Visualizer</div>
+            <input type="range" id="seek-bar" min="0" max="100" value="0">
+            <div class="controls">
+                <button>◀◀</button>
+                <button>⏮</button>
+                <button id="play-pause" style="background:#03dac6; color:black; font-weight:bold;">PLAY</button>
+                <button>⏭</button>
+                <button>▶▶</button>
+            </div>
         </section>
+
+        <!-- 2. MUSICIAN'S HUB (SOUND LAB) -->
+        <section id="musician-hub" class="tab-content">
+            <h2>የሙዚቀኞች ማዕከል (Sound Lab)</h2>
+            <div class="card">
+                <h3>ኢኳላይዘር (EQ & Effects)</h3>
+                <p>10-Band Graphic EQ እና FX Rack (Reverb, Delay)</p>
+            </div>
+            <div class="card">
+                <label>አውቶ-ክሮስፌድ (Auto-Crossfade Sec):</label>
+                <input type="number" id="crossfade" value="3">
+            </div>
+        </section>
+
+        <!-- 3. RADIO TAB -->
+        <section id="radio-tab" class="tab-content">
+            <h2>ሬዲዮ ስቴሽን (Radio Hub)</h2>
+            <div class="card">
+                <p>🟢 ኢትዮጵያ እና ኤርትራ ስቴሽኖች (በቀዳሚነት የተመረጡ)</p>
+                <p>🌐 አለምአቀፍ 15,000+ ንቁ ስቴሽኖች</p>
+            </div>
+        </section>
+
+        <!-- 4. DOWNLOADS TAB -->
+        <section id="downloads-tab" class="tab-content">
+            <h2>ሶሻል ሚዲያ ማውረጃ (Downloader)</h2>
+            <div class="card">
+                <input type="text" id="url-input" placeholder="ሊንክ እዚህ ይለጥፉ (Paste URL)...">
+                <label>የኦዲዮ ፎርማት (Audio Format):</label>
+                <select id="audio-format">
+                    <option>WAV (High Res - 96kHz)</option>
+                    <option>FLAC (Lossless)</option>
+                    <option>MP3 (320kbps)</option>
+                </select>
+                <label>የቪዲዮ ፎርማት (Video Format):</label>
+                <select id="video-format">
+                    <option>MP4 (4K / 1080p)</option>
+                    <option>Audio Extraction (ቪዲዮ ወደ ኦዲዮ)</option>
+                </select>
+                <button class="action-btn" onclick="startDownload()">አውርድ (Download)</button>
+            </div>
+        </section>
+
+        <!-- 5. FILES TAB -->
+        <section id="files-tab" class="tab-content">
+            <h2>ፋይል ማናጀር (File Manager)</h2>
+            <div class="card">
+                <p>📁 /storage/emulated/0/KivyPlayer/Downloads/</p>
+                <p style="color: gray;">ወረዱ ፋይሎች እና አቃፊዎች እዚህ ይዘረዘራሉ...</p>
+            </div>
+        </section>
+
+        <!-- 6. SETTINGS TAB -->
+        <section id="settings-tab" class="tab-content">
+            <h2>ቅንጅቶች (Settings)</h2>
+            <div class="card">
+                <label>የቋንቋ ምርጫ (Language):</label>
+                <select>
+                    <option>አማርኛ (Amharic)</option>
+                    <option>ትግርኛ (Tigrinya)</option>
+                    <option>ኦሮምኛ (Afaan Oromoo)</option>
+                    <option>English</option>
+                </select>
+                <label style="margin-top:10px; display:block;">የአፕ ጭብጥ (Theme):</label>
+                <select>
+                    <option>ጠቆር ያለ (Dark Pro)</option>
+                    <option>ደማቅ (Light Mode)</option>
+                </select>
+            </div>
+        </section>
+
     </div>
+
+    <!-- Mini-Player Sticky Bar -->
+    <div id="mini-player">
+        <span id="now-playing-text">አሁን የሚጫወት የለም...</span>
+        <button style="background:none; border:none; color:#03dac6; cursor:pointer; font-weight:bold;">|| Pause</button>
+    </div>
+
+    <!-- Bottom Navigation Bar -->
     <nav id="bottom-nav">
         <button onclick="showTab('player-tab', this)" class="active-btn">ፕሌየር</button>
+        <button onclick="showTab('musician-hub', this)">ሳውንድ ላብ</button>
+        <button onclick="showTab('radio-tab', this)">ሬዲዮ</button>
+        <button onclick="showTab('downloads-tab', this)">ዳውንሎድ</button>
+        <button onclick="showTab('files-tab', this)">ፋይሎች</button>
+        <button onclick="showTab('settings-tab', this)"ቮ>ሴቲንግ</button>
     </nav>
+
     <script>
-        function showTab(id, btn) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.querySelectorAll('#bottom-nav button').forEach(b => b.classList.remove('active-btn'));
-            btn.classList.add('active-btn');
+        function showTab(tabId, btnElement) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+
+            document.querySelectorAll('#bottom-nav button').forEach(btn => {
+                btn.classList.remove('active-btn');
+            });
+            btnElement.classList.add('active-btn');
+        }
+
+        function startDownload() {
+            const url = document.getElementById('url-input').value;
+            if(url.trim() !== "") {
+                alert("ዳውንሎድ ተጀምሯል! ፋይሉ ወደ ፋይል ማናጀር ይገባል።");
+            } else {
+                alert("እባክዎ መጀመሪያ ሊንክ ያስገቡ!");
+            }
         }
     </script>
+
 </body>
 </html>
