@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kb-player-v2';
+const CACHE_NAME = 'kb-player-v3';
 const urlsToCache = ['./index.html', './manifest.json', './icon.png'];
 
 self.addEventListener('install', (e) => {
