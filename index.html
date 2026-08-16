@@ -1,219 +1,157 @@
 <!DOCTYPE html>
-<html lang="am">
+<html lang="am" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KB Player Pro - 20K Radio & Fixed Audio</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: sans-serif; background-color: #000; color: #fff; padding: 4px; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-        .app-container { background: #111; padding: 8px; border-radius: 10px; width: 100%; max-width: 420px; border: 1px solid #222; box-shadow: 0 6px 15px rgba(0,0,0,0.9); display: flex; flex-direction: column; gap: 6px; height: 98vh; }
-        h2 { text-align: center; color: #1db954; font-size: 13px; }
-        .creator { text-align: center; color: #888; font-size: 7.5px; margin-bottom: 2px; }
-        
-        .tabs { display: flex; gap: 2px; background: #181818; padding: 2px; border-radius: 4px; }
-        .tab-btn { flex: 1; padding: 5px; background: transparent; color: #888; border: none; font-size: 7.5px; font-weight: bold; cursor: pointer; border-radius: 3px; }
-        .tab-btn.active { background: #1db954; color: #000; }
-        
-        .panel { display: none; flex: 1; flex-direction: column; gap: 6px; overflow-y: auto; }
-        .panel.active { display: flex; }
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KB Player Pro</title>
+    
+    <!-- PWA Manifest & Theme Color -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1DB954">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="KB Player Pro">
 
-        .card { background: #181818; padding: 6px; border-radius: 6px; border: 1px solid #282828; }
-        label { display: block; font-size: 8px; color: #aaa; margin-bottom: 3px; }
-        
-        input[type="file"], select { width: 100%; background: #222; color: #fff; padding: 5px; font-size: 8px; border: 1px solid #333; border-radius: 4px; }
-        select { margin-top: 2px; }
-        
-        .controls { display: flex; gap: 3px; margin-top: 4px; }
-        button.action-btn { flex: 1; padding: 6px; background: #1db954; color: #000; border: none; border-radius: 4px; font-weight: bold; font-size: 8px; cursor: pointer; }
-        button.secondary-btn { background: #333; color: #fff; }
-        
-        input[type="range"] { width: 100%; accent-color: #1db954; }
-        .time-info { display: flex; justify-content: space-between; font-size: 7.5px; color: #888; margin-top: 2px; }
-        #statusMsg { font-size: 7.5px; color: #1db954; text-align: center; margin-top: 2px; }
+    <!-- Styles -->
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #181818;
+            --accent-color: #1DB954;
+            --text-color: #FFFFFF;
+            --text-secondary: #B3B3B3;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 1.5rem;
+            color: var(--accent-color);
+        }
+        /* Install Button Style */
+        #install-btn {
+            background-color: var(--accent-color);
+            color: #000;
+            border: none;
+            padding: 10px 16px;
+            font-weight: bold;
+            border-radius: 20px;
+            cursor: pointer;
+            display: none; /* በነባሪ ተደብቆ ይቆያል፣ ክሮም ሲፈቅድ ይታያል */
+        }
+        .player-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            margin: auto 0;
+        }
+        .track-info {
+            margin: 20px 0;
+        }
+        .track-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .track-artist {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        button.control-btn {
+            background: #282828;
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        button.control-btn:active {
+            background: var(--accent-color);
+        }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
-        <h2>KB Player Pro</h2>
-        <div class="creator">ሰሪ: ክብሮም ትኩእ</div>
+    <header>
+        <h1>KB Player Pro</h1>
+        <!-- አፕሊኬሽኑን ለመጫን የሚረዳው አውቶማቲክ ቁልፍ -->
+        <button id="install-btn">Install App</button>
+    </header>
 
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab(0)">ሙዚቃ ፕሌየር</button>
-            <button class="tab-btn" onclick="switchTab(1)">ዓለም አቀፍ ሬዲዮ (20K+)</button>
+    <main class="player-card">
+        <div class="track-info">
+            <div class="track-title">እንኳን ደህና መጡ!</div>
+            <div class="track-artist">KB Player Pro - Web App</div>
         </div>
-
-        <!-- TAB 0: FIXED MUSIC PLAYER -->
-        <div class="panel active" id="panel0">
-            <div class="card">
-                <label>🎵 የሙዚቃ ፋይሎችን ይምረጡ:</label>
-                <input type="file" id="audioFileInput" accept="audio/*" multiple onchange="handleAudioFiles(this)">
-                <select id="playlist" size="6" onchange="playAudioItem(this.value)"></select>
-                <div id="statusMsg">ፋይል ይምረጡ...</div>
-            </div>
-
-            <div class="card">
-                <input type="range" id="progressBar" value="0" min="0" max="100" step="0.1" oninput="seekAudio(this.value)">
-                <div class="time-info">
-                    <span id="currentTime">00:00</span>
-                    <span id="duration">00:00</span>
-                </div>
-                <div class="controls" style="margin-top:6px;">
-                    <button class="action-btn secondary-btn" onclick="skipAudio(-1)">⏮ ቐዳማይ</button>
-                    <button class="action-btn" onclick="toggleAudioPlay()" id="playBtn">⏯ ፕሌይ / ፖዝ</button>
-                    <button class="action-btn secondary-btn" onclick="skipAudio(1)">ቀጻሊ ⏭</button>
-                </div>
-            </div>
+        <div class="controls">
+            <button class="control-btn" aria-label="ቀድመው የነበረ">⏮</button>
+            <button class="control-btn" aria-label="አጫውት/ አቁም" style="background: var(--accent-color); color: #000;">▶</button>
+            <button class="control-btn" aria-label="ቀጣይ">⏭</button>
         </div>
+    </main>
 
-        <!-- TAB 1: 20,000+ GLOBAL & LOCAL RADIOS -->
-        <div class="panel" id="panel1">
-            <div class="card" style="flex:1; display:flex; flex-direction:column;">
-                <label>📻 የኢትዮጵያ፣ ኤርትራ እና ዓለም አቀፍ ሬዲዮዎች (20,000+):</label>
-                <select id="radioList" size="10" style="flex:1; margin-top:4px;" onchange="playRadioStream(this.value)">
-                    <option value="">-- 20 ሺህ ሬዲዮዎችን በመጫን ላይ... --</option>
-                </select>
-                <audio id="radioPlayer" controls style="width:100%; margin-top:6px;"></audio>
-            </div>
-        </div>
-    </div>
-
-    <audio id="localAudioPlayer" onended="skipAudio(1)"></audio>
-
+    <!-- PWA Install Prompt & Service Worker Script -->
     <script>
-        let audioFilesList = [];
-        let currentAudioIdx = 0;
-        const localPlayer = document.getElementById('localAudioPlayer');
-        const radioPlayer = document.getElementById('radioPlayer');
-        const progressBar = document.getElementById('progressBar');
-        const currentTimeEl = document.getElementById('currentTime');
-        const durationEl = document.getElementById('duration');
-        const statusMsg = document.getElementById('statusMsg');
+        let deferredPrompt;
+        const installBtn = document.getElementById('install-btn');
 
-        function switchTab(index) {
-            document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === index));
-            document.querySelectorAll('.panel').forEach((p, i) => p.classList.toggle('active', i === index));
-        }
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // ብሮውዘሩ ዲያሎጉን እንዳያሳየው በጊዜው እንይዘዋለን
+            e.preventDefault();
+            deferredPrompt = e;
+            // ቁልፉን ለተጠቃሚው እናሳያለን (ልክ እንደ ጂሚኒ/ስፖቲፋይ)
+            installBtn.style.display = 'block';
 
-        // --- FIXED LOCAL AUDIO PLAYER (OBJECT URL & MEMORY HANDLER) ---
-        function handleAudioFiles(input) {
-            if (!input.files || input.files.length === 0) return;
-            audioFilesList = Array.from(input.files);
-            const playlistEl = document.getElementById('playlist');
-            playlistEl.innerHTML = "";
-
-            audioFilesList.forEach((file, idx) => {
-                let opt = document.createElement('option');
-                opt.value = idx;
-                opt.text = (idx + 1) + ". " + file.name;
-                playlistEl.appendChild(opt);
+            installBtn.addEventListener('click', () => {
+                installBtn.style.display = 'none';
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('ተጠቃሚው አፑን ጭኖታል');
+                    }
+                    deferredPrompt = null;
+                });
             });
-
-            if (audioFilesList.length > 0) {
-                statusMsg.innerText = audioFilesList.length + " ፋይሎች ተጭነዋል";
-                playAudioItem(0);
-            }
-        }
-
-        function playAudioItem(idx) {
-            if (audioFilesList.length === 0) return;
-            currentAudioIdx = parseInt(idx);
-            document.getElementById('playlist').selectedIndex = currentAudioIdx;
-
-            let fileObject = audioFilesList[currentAudioIdx];
-            let fileURL = window.URL.createObjectURL(fileObject);
-            
-            localPlayer.src = fileURL;
-            localPlayer.load();
-            localPlayer.play().then(() => {
-                statusMsg.innerText = "ይጫወታል: " + fileObject.name;
-            }).catch(err => {
-                statusMsg.innerText = "ማጫወት አልተቻለም (ብሮውዘር ፈቃድ ይሻል)";
-                console.error(err);
-            });
-        }
-
-        function toggleAudioPlay() {
-            if (audioFilesList.length === 0) {
-                alert("እባክዎ መጀመሪያ ሙዚቃ ይምረጡ!");
-                return;
-            }
-            if (localPlayer.paused) {
-                localPlayer.play().catch(e => console.log(e));
-            } else {
-                localPlayer.pause();
-            }
-        }
-
-        function skipAudio(dir) {
-            if (audioFilesList.length === 0) return;
-            currentAudioIdx = (currentAudioIdx + dir + audioFilesList.length) % audioFilesList.length;
-            playAudioItem(currentAudioIdx);
-        }
-
-        localPlayer.addEventListener('timeupdate', () => {
-            if (!isNaN(localPlayer.duration)) {
-                progressBar.value = (localPlayer.currentTime / localPlayer.duration) * 100;
-                currentTimeEl.innerText = fmtTime(localPlayer.currentTime);
-                durationEl.innerText = fmtTime(localPlayer.duration);
-            }
         });
 
-        function seekAudio(val) {
-            if (!isNaN(localPlayer.duration)) {
-                localPlayer.currentTime = (val / 100) * localPlayer.duration;
-            }
+        // Service Worker መመዝገቢያ
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then((reg) => console.log('Service Worker registered!', reg))
+                    .catch((err) => console.log('Service Worker registration failed:', err));
+            });
         }
-
-        function fmtTime(sec) {
-            let m = Math.floor(sec / 60), s = Math.floor(sec % 60);
-            return (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s);
-        }
-
-        // --- 20,000+ RADIOS INTEGRATION ---
-        async function loadMassiveRadios() {
-            const radioSelect = document.getElementById('radioList');
-            try {
-                // Fetching top 20,000 radio stations from the global public database registry
-                let response = await fetch('https://de1.api.radio-browser.info/json/stations/topclick/20000');
-                let data = await response.json();
-                
-                // Fetching Ethiopian & Eritrean specific stations
-                let etResponse = await fetch('https://de1.api.radio-browser.info/json/stations/bycountry/Ethiopia');
-                let etData = await etResponse.json();
-
-                let erResponse = await fetch('https://de1.api.radio-browser.info/json/stations/bycountry/Eritrea');
-                let erData = await erResponse.json();
-                
-                let combinedRadios = [...etData, ...erData, ...data];
-                
-                radioSelect.innerHTML = "";
-                combinedRadios.forEach((station, i) => {
-                    let opt = document.createElement('option');
-                    opt.value = station.url_resolved || station.url;
-                    opt.text = (i + 1) + ". " + station.name + " (" + (station.country || "Global") + ")";
-                    radioSelect.appendChild(opt);
-                });
-            } catch (err) {
-                radioSelect.innerHTML = `
-                    <option value="https://stream.zeno.fm/fana_fm_live">ፋና ኤፍኤም 98.1 (ኢትዮጵያ)</option>
-                    <option value="https://stream.zeno.fm/sheger_fm_102.1">ሸገር ኤፍኤም 102.1 (ኢትዮጵያ)</option>
-                    <option value="https://stream.zeno.fm/dimtsi_hafash">ድምፂ ሃፋሽ (ኤርትራ)</option>
-                `;
-            }
-        }
-
-        function playRadioStream(url) {
-            if (url) {
-                if(!localPlayer.paused) localPlayer.pause();
-                radioPlayer.src = url;
-                radioPlayer.play().catch(e => console.log("Radio play error"));
-            }
-        }
-
-        // Load 20K radios on startup
-        loadMassiveRadios();
     </script>
 </body>
 </html>
