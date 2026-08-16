@@ -4,23 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KB Player Pro</title>
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="/KB-player/manifest.json">
 </head>
 <body>
     <h1>KB Player Pro</h1>
-    <button id="install-btn" style="display:none; padding:10px; background:green; color:white;">Install App</button>
-    <div id="player-content">ሙዚቃ ማጫወቻው ክፍል እዚህ አለ</div>
+    <button id="install-btn" style="display:none; padding:12px 20px; background:green; color:white; font-size:16px; border:none; border-radius:5px; margin-top:20px;">Install App</button>
+    <div id="player-content" style="margin-top:20px;">ሙዚቃ ማጫወቻው ክፍል እዚህ አለ</div>
     
     <script>
+        let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
+            deferredPrompt = e;
             const btn = document.getElementById('install-btn');
             btn.style.display = 'block';
-            btn.addEventListener('click', () => e.prompt());
+            btn.addEventListener('click', () => {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                    }
+                    deferredPrompt = null;
+                });
+            });
         });
         
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js');
+            navigator.serviceWorker.register('/KB-player/sw.js')
+            .then(() => console.log('Service Worker Registered'));
         }
     </script>
 </body>
