@@ -3,228 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KB Player Pro</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#03dac6">
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('sw.js').then(reg => {
-            reg.onupdatefound = () => {
-              const installingWorker = reg.installing;
-              installingWorker.onstatechange = () => {
-                if (installingWorker.state === 'installed') {
-                  if (navigator.serviceWorker.controller) {
-                    if (confirm('አዲስ አፕዴት አለ! ለማዘመን እሺ ይጫኑ።')) {
-                      window.location.reload();
-                    }
-                  }
-                }
-              };
-            };
-          });
-        });
-      }
-    </script>
+    <title>KB Player Pro - ኬቢ ፕሌየር ፕሮ</title>
     <style>
-        body { font-family: sans-serif; margin: 0; background: #121212; color: #ffffff; padding-bottom: 70px; }
-        .tab-content { display: none; padding: 15px; }
-        .tab-content.active { display: block; }
-        
-        #bottom-nav { position: fixed; bottom: 0; width: 100%; display: flex; background: #1f1f1f; border-top: 1px solid #333; z-index: 1000; box-sizing: border-box; }
-        #bottom-nav button { flex: 1; padding: 10px 2px; color: #aaa; background: none; border: none; font-size: 10px; cursor: pointer; text-align: center; }
-        #bottom-nav button.active-btn { color: #03dac6; font-weight: bold; }
-
-        .card { background: #1e1e1e; padding: 15px; margin-bottom: 12px; border-radius: 8px; border: 1px solid #333; }
-        input, select { width: 100%; padding: 10px; margin: 6px 0 12px 0; background: #2c2c2c; border: 1px solid #444; color: white; border-radius: 5px; box-sizing: border-box; }
-        button.action-btn { width: 100%; padding: 12px; background: #03dac6; border: none; color: black; font-weight: bold; border-radius: 5px; cursor: pointer; }
-        button.action-btn:active { background: #02b3a2; }
-        
-        .analyzer-bar { background: #1a1a1a; padding: 10px; border-radius: 5px; font-family: monospace; color: #03dac6; margin-bottom: 10px; text-align: center; font-size: 14px; }
-        .controls { display: flex; justify-content: space-around; align-items: center; margin: 15px 0; }
-        .controls button { background: #333; color: white; border: none; padding: 10px 14px; border-radius: 5px; cursor: pointer; font-size: 14px; }
-        
-        .radio-item { display: flex; justify-content: space-between; align-items: center; background: #252525; padding: 10px; margin-bottom: 8px; border-radius: 6px; font-size: 13px; }
-        .file-item { padding: 8px; background: #252525; margin-bottom: 6px; border-radius: 4px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
+        :root {
+            --bg-color: #121212;
+            --surface-color: #1e1e1e;
+            --primary-color: #bb86fc;
+            --text-color: #ffffff;
+            --text-secondary: #b0b0b0;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: var(--surface-color);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #333;
+        }
+        h1 { margin: 0; color: var(--primary-color); font-size: 24px; }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: var(--surface-color);
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        .section-title {
+            font-size: 18px;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+        }
+        .player-controls, .tools-grid, .radio-list {
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: var(--primary-color);
+            color: #000;
+            border: none;
+            padding: 10px 16px;
+            margin: 5px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background-color: #9a67ea;
+        }
+        ul { padding-left: 20px; color: var(--text-secondary); }
+        li { margin-bottom: 8px; }
     </style>
 </head>
 <body>
 
-    <div id="app-container">
+    <header>
+        <h1>KB Player Pro / ኬቢ ፕሌየር ፕሮ</h1>
+        <p>Advanced Music, Video, Musicians' Toolset & Radio Web App</p>
+    </header>
 
-        <!-- 1. PLAYER TAB -->
-        <section id="player-tab" class="tab-content active">
-            <h2>ማጫወቻ (Player)</h2>
-            <div class="analyzer-bar">BPM: <span id="bpm-val">120</span> | Key: <span id="key-val">Am</span></div>
-            <div class="card" style="height: 100px; display: flex; align-items: center; justify-content: center; color: #03dac6; font-weight: bold;">
-                🎵 KB Audio Engine Pro Active
-            </div>
-            <input type="range" id="seek-bar" min="0" max="100" value="0">
-            <div class="controls">
-                <button onclick="alert('ወደ ፊት ተመለሰ')">◀◀</button>
-                <button onclick="alert('ቀደም ያለ ሙዚቃ')">⏮</button>
-                <button id="play-pause-btn" onclick="togglePlay()" style="background:#03dac6; color:black; font-weight:bold; padding: 12px 20px;">PLAY</button>
-                <button onclick="alert('ቀጣይ ሙዚቃ')">⏭</button>
-                <button onclick="alert('ወደ ፊት አለፈ')">▶▶</button>
-            </div>
-        </section>
-
-        <!-- 2. MUSICIAN'S HUB (SOUND LAB) -->
-        <section id="musician-hub" class="tab-content">
-            <h2>ሳውንድ ላብ (Sound Lab)</h2>
-            <div class="card">
-                <h3>ኢኳላይዘር (10-Band EQ)</h3>
-                <label>ባስ (Bass Boost): <span id="bass-val">5</span>dB</label>
-                <input type="range" min="0" max="10" value="5" oninput="document.getElementById('bass-val').innerText = this.value">
-                <label>ትሬብል (Treble): <span id="treble-val">5</span>dB</label>
-                <input type="range" min="0" max="10" value="5" oninput="document.getElementById('treble-val').innerText = this.value">
-            </div>
-            <div class="card">
-                <label>አውቶ-ክሮስፌድ (Crossfade Seconds):</label>
-                <input type="number" id="crossfade" value="3">
-                <button class="action-btn" onclick="alert('የሳውንድ ቅንብሮች ተስተካክለዋል!')">ቅንብር አስቀምጥ</button>
-            </div>
-        </section>
-
-        <!-- 3. RADIO TAB -->
-        <section id="radio-tab" class="tab-content">
-            <h2>ሬዲዮ ስቴሽን (Radio Hub)</h2>
-            
-            <div class="card">
-                <p style="margin-bottom:10px; color:#03dac6; font-weight:bold;">🇪🇹 የኢትዮጵያ እና 🇪🇷 ኤርትራ ስቴሽኖች</p>
-                <div class="radio-item">
-                    <span>ኢትዮ ኤፍ ኤም 97.1</span>
-                    <button class="action-btn" style="width:auto; padding:6px 12px;" onclick="playRadio('https://stream.zeno.fm/f3wvbbqmdv8uv', 'ኢትዮ ኤፍ ኤም 97.1')">ጫወት</button>
-                </div>
-                <div class="radio-item">
-                    <span>ኢትዮጵያ ሬዲዮ ብሔራዊ</span>
-                    <button class="action-btn" style="width:auto; padding:6px 12px;" onclick="playRadio('https://icecast.vrtcdn.be/radio1-high.mp3', 'ኢትዮጵያ ሬዲዮ ብሔራዊ')">ጫወት</button>
-                </div>
-                <div class="radio-item">
-                    <span>ኤርትራ ሬዲዮ (Tena)</span>
-                    <button class="action-btn" style="width:auto; padding:6px 12px;" onclick="playRadio('https://stream.zeno.fm/0rm30g3333duv', 'ኤርትራ ሬዲዮ')">ጫወት</button>
-                </div>
-                <div class="radio-item">
-                    <span>አዲስ ኤፍ ኤም 96.3</span>
-                    <button class="action-btn" style="width:auto; padding:6px 12px;" onclick="playRadio('https://stream.zeno.fm/e27553vy4x8uv', 'አዲስ ኤፍ ኤም 96.3')">ጫወት</button>
-                </div>
-                <div class="radio-item">
-                    <span>Sheger FM 102.1</span>
-                    <button class="action-btn" style="width:auto; padding:6px 12px;" onclick="playRadio('https://stream.zeno.fm/7t5vbbqmdv8uv', 'Sheger FM 102.1')">ጫወት</button>
-                </div>
-            </div>
-
-            <div class="card">
-                <p style="margin-bottom:10px; color:#03dac6; font-weight:bold;">🌐 ዓለምአቀፍ ሬዲዮዎች (Global Hub)</p>
-                <div class="radio-item">
-                    <span>Global Jazz Radio</span>
-                    <button class="action-btn" style="width:auto; padding:6px 12px;" onclick="playRadio('https://live.jazzradio.com/jt-jazz-world', 'Global Jazz Radio')">ጫወት</button>
-                </div>
-                <div class="radio-item">
-                    <span>BBC World Service</span>
-                    <button class="action-btn" style="width:auto; padding:6px 12px;" onclick="playRadio('https://stream.live.vc.bbcmedia.co.uk/bbc_world_service', 'BBC World Service')">ጫወት</button>
-                </div>
-            </div>
-            <audio id="radio-audio" preload="none"></audio>
-        </section>
-
-        <!-- 4. DOWNLOADS TAB -->
-        <section id="downloads-tab" class="tab-content">
-            <h2>ሶሻል ሚዲያ ማውረጃ</h2>
-            <div class="card">
-                <input type="text" id="url-input" placeholder="ሊንክ እዚህ ይለጥፉ (Paste URL)...">
-                <label>የኦዲዮ ፎርማት:</label>
-                <select id="audio-format">
-                    <option>WAV (High Res - 96kHz)</option>
-                    <option>FLAC (Lossless)</option>
-                    <option>MP3 (320kbps)</option>
-                </select>
-                <button class="action-btn" onclick="startDownload()">አውርድ (Download)</button>
-            </div>
-        </section>
-
-        <!-- 5. FILES TAB -->
-        <section id="files-tab" class="tab-content">
-            <h2>ፋይል ማናጀር</h2>
-            <div class="card">
-                <p style="font-size: 12px; color: #888;">📁 /storage/emulated/0/KivyPlayer/Downloads/</p>
-                <div class="file-item"><span>Melody_Mix_01.mp3</span> <span style="color:#03dac6;">3.2 MB</span></div>
-                <div class="file-item"><span>Krar_Live_Session.wav</span> <span style="color:#03dac6;">14.5 MB</span></div>
-            </div>
-        </section>
-
-        <!-- 6. SETTINGS TAB -->
-        <section id="settings-tab" class="tab-content">
-            <h2>ቅንጅቶች (Settings)</h2>
-            <div class="card">
-                <label>የቋንቋ ምርጫ:</label>
-                <select id="lang-select">
-                    <option>አማርኛ (Amharic)</option>
-                    <option>ትግርኛ (Tigrinya)</option>
-                    <option>English</option>
-                </select>
-                <button class="action-btn" onclick="alert('ቅንብሮቹ ተመዝግበዋል!')" style="margin-top: 10px;">ለውጦችን አድን</button>
-            </div>
-        </section>
-
+    <div class="container">
+        <div class="section-title">🎵 ግሎባል ፕሌየር እና ማጫወቻ (Player Engine)</div>
+        <p>የድምጽ እና ቪዲዮ ፋይሎችን ያለእንከን ማጫወት፣ ፍጥነት መቀየር (Playback Speed) እና የቆይታ ጊዜ መቆጣጠሪያ።</p>
+        <div class="player-controls">
+            <button onclick="alert('ማጫወቻው ተጀምሯል (Playing)...')">▶ አጫወት (Play)</button>
+            <button onclick="alert('ተቋርጧል (Paused)')">⏸ አቁም (Pause)</button>
+            <button onclick="alert('ፍጥነት ተቀይሯል')">⚡ 1.0x ፍጥነት</button>
+        </div>
     </div>
 
-    <!-- Bottom Navigation Bar -->
-    <nav id="bottom-nav">
-        <button onclick="showTab('player-tab', this)" class="active-btn">ፕሌየር</button>
-        <button onclick="showTab('musician-hub', this)">ሳውንድ ላብ</button>
-        <button onclick="showTab('radio-tab', this)">ሬዲዮ</button>
-        <button onclick="showTab('downloads-tab', this)">ዳውንሎድ</button>
-        <button onclick="showTab('files-tab', this)">ፋይሎች</button>
-        <button onclick="showTab('settings-tab', this)">ሴቲንግ</button>
-    </nav>
+    <div class="container">
+        <div class="section-title">🎸 የሙዚቀኞች ማዕከል (Musicians' Toolset)</div>
+        <p>ባህላዊ የክራር መቃኛ (Krar Tuner)፣ ቴምፖ እና የሪትም መቆጣጠሪያ (BPM 60-180)።</p>
+        <div class="tools-grid">
+            <button onclick="alert('የክራር መቃኛ ተከፍቷል')">ክራር መቃኛ (Tuner)</button>
+            <button onclick="alert('ቴምፖ ተስተካክሏል')">ቴምፖ (BPM 120)</button>
+        </div>
+    </div>
 
-    <script>
-        function showTab(tabId, btnElement) {
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.getElementById(tabId).classList.add('active');
+    <div class="container">
+        <div class="section-title">📻 የኢትዮጵያ እና ኤርትራ ራዲዮ ጣቢያዎች (Radio Streams)</div>
+        <ul>
+            <li>ሼገር ኤፍ ኤም 102.1 (Sheger FM)</li>
+            <li>ፋና ኤፍ ኤም 98.1 (Fana FM)</li>
+            <li>ኢቢሲ እና ኤርትራ ራዲዮ (EBC & ERI-Radio)</li>
+            <li>ቢስራት እና አሀዱ ኤፍ ኤም</li>
+        </ul>
+        <div class="radio-list">
+            <button onclick="alert('ራዲዮ ስርጭት እየተጫወተ ነው...')">ራዲዮ አጫወት</button>
+        </div>
+    </div>
 
-            document.querySelectorAll('#bottom-nav button').forEach(btn => {
-                btn.classList.remove('active-btn');
-            });
-            btnElement.classList.add('active-btn');
-        }
-
-        let isPlaying = false;
-        function togglePlay() {
-            isPlaying = !isPlaying;
-            const btn = document.getElementById('play-pause-btn');
-            if(isPlaying) {
-                btn.innerText = "PAUSE";
-                btn.style.background = "#ff4444";
-            } else {
-                btn.innerText = "PLAY";
-                btn.style.background = "#03dac6";
-            }
-        }
-
-        function playRadio(streamUrl, stationName) {
-            const audio = document.getElementById('radio-audio');
-            audio.src = streamUrl;
-            audio.play().then(() => {
-                alert(stationName + " መጫወት ጀምሯል!");
-            }).catch(err => {
-                alert("ስትሪሙን ማጫወት አልተቻለም (ኔትወርክ ይፈትሹ)");
-            });
-        }
-
-        function startDownload() {
-            const url = document.getElementById('url-input').value;
-            if(url.trim() !== "") {
-                alert("ዳውንሎድ ተጀምሯል!");
-                document.getElementById('url-input').value = "";
-            } else {
-                alert("እባክዎ መጀመሪያ ትክክለኛ ሊንክ ያስገቡ!");
-            }
-        }
-    </script>
+    <div class="container">
+        <div class="section-title">🌐 ባለብዙ ቋንቋ ድጋፍ (Multi-Language Support)</div>
+        <p>እንግሊዝኛ፣ አማርኛ፣ ትግርኛ እና ኦሮምኛ ቋንቋዎችን ማስተካከል የሚቻልበት ዝግጅት።</p>
+    </div>
 
 </body>
 </html>
