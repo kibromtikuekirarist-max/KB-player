@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kb-player-pro-v1';
+const CACHE_NAME = 'kb-player-pro-v2';
 const ASSETS_TO_CACHE = ['/', '/index.html', '/manifest.json'];
 
 self.addEventListener('install', (event) => {
