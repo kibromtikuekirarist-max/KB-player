@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KB Player Pro - ኬቢ ፕሌየር ፕሮ</title>
+    <link rel="manifest" href="/manifest.json">
     <style>
         :root {
             --bg-color: #121212;
@@ -11,6 +12,7 @@
             --primary-color: #bb86fc;
             --text-color: #ffffff;
             --text-secondary: #b0b0b0;
+            --accent-color: #03dac6;
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -18,39 +20,44 @@
             color: var(--text-color);
             margin: 0;
             padding: 0;
+            padding-bottom: 90px; /* Space for sticky player */
         }
         header {
             background-color: var(--surface-color);
-            padding: 20px;
+            padding: 15px;
             text-align: center;
             border-bottom: 1px solid #333;
         }
-        h1 { margin: 0; color: var(--primary-color); font-size: 24px; }
+        h1 { margin: 0; color: var(--primary-color); font-size: 22px; }
+        p { color: var(--text-secondary); font-size: 14px; }
         .container {
             max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
+            margin: 15px auto;
+            padding: 15px;
             background-color: var(--surface-color);
             border-radius: 12px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
         .section-title {
-            font-size: 18px;
+            font-size: 16px;
             color: var(--primary-color);
             margin-bottom: 10px;
             border-bottom: 1px solid #333;
             padding-bottom: 5px;
+            font-weight: bold;
         }
-        .player-controls, .tools-grid, .radio-list {
-            margin-bottom: 20px;
+        .btn-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
         }
         button {
             background-color: var(--primary-color);
             color: #000;
             border: none;
-            padding: 10px 16px;
-            margin: 5px;
-            border-radius: 6px;
+            padding: 12px;
+            border-radius: 8px;
             font-weight: bold;
             cursor: pointer;
             transition: background 0.3s;
@@ -58,61 +65,124 @@
         button:hover {
             background-color: #9a67ea;
         }
-        ul { padding-left: 20px; color: var(--text-secondary); }
-        li { margin-bottom: 8px; }
+        .radio-item {
+            background: #2a2a2a;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        /* Sticky Bottom Player */
+        .sticky-player {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #1a1a1a;
+            border-top: 1px solid #333;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.5);
+            box-sizing: border-box;
+        }
+        .sticky-info {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+        .sticky-controls button {
+            padding: 8px 12px;
+            margin: 0 3px;
+            background: var(--accent-color);
+        }
     </style>
 </head>
 <body>
 
     <header>
         <h1>KB Player Pro / ኬቢ ፕሌየር ፕሮ</h1>
-        <p>Advanced Music, Video, Musicians' Toolset & Radio Web App</p>
+        <p>Advanced Music, Video, Musicians' Toolset & Radio App</p>
     </header>
 
+    <!-- 1. Player Engine Section -->
     <div class="container">
-        <div class="section-title">🎵 ግሎባል ፕሌየር እና ማጫወቻ (Player Engine)</div>
-        <p>የድምጽ እና ቪዲዮ ፋይሎችን ያለእንከን ማጫወት፣ ፍጥነት መቀየር (Playback Speed) እና የቆይታ ጊዜ መቆጣጠሪያ።</p>
-        <div class="player-controls">
-            <button onclick="alert('ማጫወቻው ተጀምሯል (Playing)...')">▶ አጫወት (Play)</button>
-            <button onclick="alert('ተቋርጧል (Paused)')">⏸ አቁም (Pause)</button>
-            <button onclick="alert('ፍጥነት ተቀይሯል')">⚡ 1.0x ፍጥነት</button>
+        <div class="section-title">🎵 የሙዚቃ እና ቪዲዮ ማጫወቻ (Player Engine)</div>
+        <p>የድምጽ እና ቪዲዮ ፋይሎችን ያለእንከን ማጫወት እና ፍጥነት ማስተካከል (Playback Speed)</p>
+        <div class="btn-grid">
+            <button onclick="playMedia()">▶ አጫወት (Play)</button>
+            <button onclick="pauseMedia()">⏸ አቁም (Pause)</button>
+            <button onclick="changeSpeed()">⚡ ፍጥነት (1.0x)</button>
         </div>
     </div>
 
+    <!-- 2. Musicians' Toolset Section (Krar Tuner & BPM) -->
     <div class="container">
         <div class="section-title">🎸 የሙዚቀኞች ማዕከል (Musicians' Toolset)</div>
-        <p>ባህላዊ የክራር መቃኛ (Krar Tuner)፣ ቴምፖ እና የሪትም መቆጣጠሪያ (BPM 60-180)።</p>
-        <div class="tools-grid">
-            <button onclick="alert('የክራር መቃኛ ተከፍቷል')">ክራር መቃኛ (Tuner)</button>
-            <button onclick="alert('ቴምፖ ተስተካክሏል')">ቴምፖ (BPM 120)</button>
+        <p>ባህላዊ የክራር መቃኛ (Krar Tuner) እና የቴምፖ መቆጣጠሪያ (BPM)</p>
+        <div class="btn-grid">
+            <button onclick="openTuner()">ክራር መቃኛ (Tuner)</button>
+            <button onclick="openBpm()">ቴምፖ (BPM 120)</button>
         </div>
     </div>
 
+    <!-- 3. Radio Streams Section -->
     <div class="container">
         <div class="section-title">📻 የኢትዮጵያ እና ኤርትራ ራዲዮ ጣቢያዎች (Radio Streams)</div>
-        <ul>
-            <li>ሼገር ኤፍ ኤም 102.1 (Sheger FM)</li>
-            <li>ፋና ኤፍ ኤም 98.1 (Fana FM)</li>
-            <li>ኢቢሲ እና ኤርትራ ራዲዮ (EBC & ERI-Radio)</li>
-            <li>ቢስራት እና አሀዱ ኤፍ ኤም</li>
-        </ul>
-        <div class="radio-list">
-            <button onclick="alert('ራዲዮ ስርጭት እየተጫወተ ነው...')">ራዲዮ አጫወት</button>
+        <div class="radio-item">
+            <span>ሼገር ኤፍ ኤም 102.1 (Sheger FM)</span>
+            <button onclick="playRadio('Sheger FM 102.1')">አዳምጥ</button>
+        </div>
+        <div class="radio-item">
+            <span>ፋና ኤፍ ኤም 98.1 (Fana FM)</span>
+            <button onclick="playRadio('Fana FM 98.1')">አዳምጥ</button>
+        </div>
+        <div class="radio-item">
+            <span>ኢቢሲ ራዲዮ (EBC Radio)</span>
+            <button onclick="playRadio('EBC Radio')">አዳምጥ</button>
         </div>
     </div>
 
-    <div class="container">
-        <div class="section-title">🌐 ባለብዙ ቋንቋ ድጋፍ (Multi-Language Support)</div>
-        <p>እንግሊዝኛ፣ አማርኛ፣ ትግርኛ እና ኦሮምኛ ቋንቋዎችን ማስተካከል የሚቻልበት ዝግጅት።</p>
+    <!-- Global Sticky Bottom Player -->
+    <div class="sticky-player">
+        <div class="sticky-info" id="nowPlaying">KB Player ዝግጁ ነው...</div>
+        <div class="sticky-controls">
+            <button onclick="playMedia()">▶</button>
+            <button onclick="pauseMedia()">⏸</button>
+        </div>
     </div>
 
-    <!-- ሰርቪስ ወርከርን ለማንቃት እና ኦፍላይን እንዲሰራ የሚያስችል ስክሪፕት በአንድ ላይ -->
+    <!-- JavaScript Functions for Player Actions -->
     <script>
+        function playMedia() {
+            document.getElementById('nowPlaying').innerText = "እየተጫወተ ነው (Playing)...";
+        }
+        function pauseMedia() {
+            document.getElementById('nowPlaying').innerText = "ተቋርጧል (Paused)";
+        }
+        function changeSpeed() {
+            alert('የመጫወቻ ፍጥነት ወደ 1.5x ተቀይሯል');
+        }
+        function openTuner() {
+            alert('የባህላዊ ክራር መቃኛ (Krar Tuner) ተከፍቷል');
+        }
+        function openBpm() {
+            alert('ቴምፖ እና ሪትም ማስተካከያ ተከፍቷል (BPM 60-180)');
+        }
+        function playRadio(stationName) {
+            document.getElementById('nowPlaying').innerText = "ራዲዮ: " + stationName;
+            alert(stationName + " ስርጭት ተጀምሯል!");
+        }
+
+        // Register Service Worker for Offline Mode
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/sw.js')
-                    .then((reg) => { console.log('KB Player Offline Mode Active!', reg.scope); })
-                    .catch((err) => { console.log('Service Worker registration failed:', err); });
+                    .then((reg) => { console.log('KB Player Offline Active!', reg.scope); })
+                    .catch((err) => { console.log('Service Worker failed:', err); });
             });
         }
     </script>
