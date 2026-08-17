@@ -1,42 +1,39 @@
-const CACHE_NAME = 'kb-player-v8';
-const urlsToCache = [
-  './index.html',
-  './manifest.json',
-  './icon-192.png',
-  './icon-512.png'
+const CACHE_NAME = 'kb-player-pro-v1';
+const ASSETS_TO_CACHE = [
+    '/',
+    '/index.html',
+    '/manifest.json'
 ];
 
-self.addEventListener('install', (e) => {
-  self.skipWaiting();
-  e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache))
-  );
-});
-
-self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cache) => {
-          if (cache !== CACHE_NAME) {
-            return caches.delete(cache);
-          }
-        })
-      );
-    }).then(() => self.clients.claim())
-  );
-});
-
-self.addEventListener('fetch', (e) => {
-  e.respondWith(
-    fetch(e.request)
-      .then((response) => {
-        const resClone = response.clone();
+// Install Service Worker and Cache all core assets
+self.addEventListener('install', (event) => {
+    event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
-          cache.put(e.request, resClone);
-        });
-        return response;
-      })
-      .catch(() => caches.match(e.request))
-  );
+            return cache.addAll(ASSETS_TO_CACHE);
+        })
+    );
+});
+
+// Activate and clean up old caches
+self.addEventListener('activate', (event) => {
+    event.waitUntil(
+        caches.keys().then((keys) => {
+            return Promise.all(
+                keys.map((key) => {
+                    if (key !== CACHE_NAME) {
+                        return caches.delete(key);
+                    }
+                })
+            );
+        })
+    );
+});
+
+// Fetch assets from cache when offline
+self.addEventListener('fetch', (event) => {
+    event.respondWith(
+        caches.match(event.request).then((cachedResponse) => {
+            return cachedResponse || fetch(event.request);
+        })
+    );
 });
