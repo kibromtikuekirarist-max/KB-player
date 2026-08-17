@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="am">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KB Player Pro - ኬቢ ፕሌየር ፕሮ</title>
+    <title>KB Player Pro</title>
     <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#bb86fc">
     <style>
         :root {
             --bg-color: #121212;
@@ -20,7 +21,7 @@
             color: var(--text-color);
             margin: 0;
             padding: 0;
-            padding-bottom: 90px; /* Space for sticky player */
+            padding-bottom: 140px;
         }
         header {
             background-color: var(--surface-color);
@@ -28,15 +29,20 @@
             text-align: center;
             border-bottom: 1px solid #333;
         }
-        h1 { margin: 0; color: var(--primary-color); font-size: 22px; }
-        p { color: var(--text-secondary); font-size: 14px; }
-        .container {
+        h1 { margin: 0; color: var(--primary-color); font-size: 20px; }
+        p { color: var(--text-secondary); font-size: 13px; }
+        
+        .tab-content {
+            display: none;
             max-width: 800px;
             margin: 15px auto;
             padding: 15px;
             background-color: var(--surface-color);
             border-radius: 12px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        .tab-content.active {
+            display: block;
         }
         .section-title {
             font-size: 16px;
@@ -52,137 +58,335 @@
             gap: 10px;
             margin-top: 10px;
         }
-        button {
+        button, select {
             background-color: var(--primary-color);
             color: #000;
             border: none;
-            padding: 12px;
+            padding: 10px;
             border-radius: 8px;
             font-weight: bold;
             cursor: pointer;
             transition: background 0.3s;
         }
+        select {
+            width: 100%;
+            background: #2a2a2a;
+            color: var(--text-color);
+            border: 1px solid #444;
+            margin-top: 5px;
+        }
         button:hover {
             background-color: #9a67ea;
         }
-        .radio-item {
+        .item-box {
             background: #2a2a2a;
-            padding: 10px;
-            margin: 5px 0;
+            padding: 12px;
+            margin: 8px 0;
             border-radius: 6px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
+        
         /* Sticky Bottom Player */
         .sticky-player {
             position: fixed;
-            bottom: 0;
+            bottom: 65px;
             left: 0;
             width: 100%;
             background-color: #1a1a1a;
             border-top: 1px solid #333;
-            padding: 10px 20px;
+            padding: 8px 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 -4px 10px rgba(0,0,0,0.5);
             box-sizing: border-box;
+            z-index: 99;
         }
         .sticky-info {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
             color: var(--text-color);
         }
         .sticky-controls button {
-            padding: 8px 12px;
-            margin: 0 3px;
+            padding: 6px 10px;
+            margin: 0 2px;
             background: var(--accent-color);
+            font-size: 12px;
+        }
+
+        /* Bottom Navigation Tabs */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #1f1f1f;
+            border-top: 1px solid #333;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            z-index: 100;
+        }
+        .nav-item {
+            background: none;
+            color: var(--text-secondary);
+            border: none;
+            font-size: 11px;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+            padding: 5px;
+        }
+        .nav-item.active {
+            color: var(--primary-color);
+            font-weight: bold;
         }
     </style>
 </head>
-<body>
+<body data-lang="en">
 
     <header>
-        <h1>KB Player Pro / ኬቢ ፕሌየር ፕሮ</h1>
-        <p>Advanced Music, Video, Musicians' Toolset & Radio App</p>
+        <h1 id="appTitle">KB Player Pro</h1>
+        <p id="appSub">Professional Audio, Video, Musicians & Radio Suite</p>
     </header>
 
-    <!-- 1. Player Engine Section -->
-    <div class="container">
-        <div class="section-title">🎵 የሙዚቃ እና ቪዲዮ ማጫወቻ (Player Engine)</div>
-        <p>የድምጽ እና ቪዲዮ ፋይሎችን ያለእንከን ማጫወት እና ፍጥነት ማስተካከል (Playback Speed)</p>
+    <!-- 1. Player Tab -->
+    <div id="playerTab" class="tab-content active">
+        <div class="section-title" id="tPlayer">Media Player Engine</div>
+        <p id="dPlayer">Play local and offline audio/video files with advanced playback speed and pitch controls.</p>
         <div class="btn-grid">
-            <button onclick="playMedia()">▶ አጫወት (Play)</button>
-            <button onclick="pauseMedia()">⏸ አቁም (Pause)</button>
-            <button onclick="changeSpeed()">⚡ ፍጥነት (1.0x)</button>
+            <button onclick="playMedia()" id="btnPlay">Play</button>
+            <button onclick="pauseMedia()" id="btnPause">Pause</button>
+            <button onclick="alert('Speed: 1.0x')" id="btnSpeed">Speed (1.0x)</button>
         </div>
     </div>
 
-    <!-- 2. Musicians' Toolset Section (Krar Tuner & BPM) -->
-    <div class="container">
-        <div class="section-title">🎸 የሙዚቀኞች ማዕከል (Musicians' Toolset)</div>
-        <p>ባህላዊ የክራር መቃኛ (Krar Tuner) እና የቴምፖ መቆጣጠሪያ (BPM)</p>
+    <!-- 2. Musicians Tab (Special Toolset) -->
+    <div id="musiciansTab" class="tab-content">
+        <div class="section-title" id="tMusicians">Musicians' Special Toolset</div>
+        <p id="dMusicians">Traditional Krar Tuner, BPM Metronome, and Audio Pitch Analyzer for professionals.</p>
         <div class="btn-grid">
-            <button onclick="openTuner()">ክራር መቃኛ (Tuner)</button>
-            <button onclick="openBpm()">ቴምፖ (BPM 120)</button>
+            <button onclick="alert('Krar Tuner Active')" id="btnTuner">Krar Tuner</button>
+            <button onclick="alert('BPM Metronome Active (120)')" id="btnBpm">BPM Metronome</button>
+            <button onclick="alert('Audio Pitch Shifter Active')" id="btnPitch">Pitch Shifter</button>
         </div>
     </div>
 
-    <!-- 3. Radio Streams Section -->
-    <div class="container">
-        <div class="section-title">📻 የኢትዮጵያ እና ኤርትራ ራዲዮ ጣቢያዎች (Radio Streams)</div>
-        <div class="radio-item">
-            <span>ሼገር ኤፍ ኤም 102.1 (Sheger FM)</span>
-            <button onclick="playRadio('Sheger FM 102.1')">አዳምጥ</button>
+    <!-- 3. Radio Tab -->
+    <div id="radioTab" class="tab-content">
+        <div class="section-title" id="tRadio">Live Radio Streams</div>
+        <div class="item-box">
+            <span>Sheger FM 102.1</span>
+            <button onclick="playRadio('Sheger FM 102.1')" class="btnListen">Listen</button>
         </div>
-        <div class="radio-item">
-            <span>ፋና ኤፍ ኤም 98.1 (Fana FM)</span>
-            <button onclick="playRadio('Fana FM 98.1')">አዳምጥ</button>
+        <div class="item-box">
+            <span>Fana FM 98.1</span>
+            <button onclick="playRadio('Fana FM 98.1')" class="btnListen">Listen</button>
         </div>
-        <div class="radio-item">
-            <span>ኢቢሲ ራዲዮ (EBC Radio)</span>
-            <button onclick="playRadio('EBC Radio')">አዳምጥ</button>
+        <div class="item-box">
+            <span>EBC Radio</span>
+            <button onclick="playRadio('EBC Radio')" class="btnListen">Listen</button>
+        </div>
+    </div>
+
+    <!-- 4. Download Tab -->
+    <div id="downloadTab" class="tab-content">
+        <div class="section-title" id="tDownload">Offline Downloads</div>
+        <p id="dDownload">Manage your offline media storage and downloaded files securely.</p>
+        <div class="item-box">
+            <span id="txtNoDownload">No offline files found</span>
+            <button onclick="alert('Scanning local storage...')" id="btnScan">Scan Storage</button>
+        </div>
+    </div>
+
+    <!-- 5. Settings Tab (Strict Language Order: English, Tigrinya, Amharic, Oromo) -->
+    <div id="settingsTab" class="tab-content">
+        <div class="section-title" id="tSettings">Settings & Preferences</div>
+        <p id="dSettings">Select your preferred language (Default: English)</p>
+        
+        <label style="font-size: 13px; color: var(--text-secondary);" id="lblLangSelect">Select Language / ቋንቋ ምረጥ / Filannoo Afaan:</label>
+        <select id="languageSelector" onchange="changeLanguage(this.value)">
+            <option value="en">English (Default)</option>
+            <option value="ti">ትግርኛ</option>
+            <option value="am">አማርኛ</option>
+            <option value="om">Afaan Oromoo</option>
+        </select>
+        
+        <div style="margin-top: 15px;">
+            <button onclick="clearCacheData()" id="btnClearCache" style="width: 100%;">Clear Offline Cache</button>
         </div>
     </div>
 
     <!-- Global Sticky Bottom Player -->
     <div class="sticky-player">
-        <div class="sticky-info" id="nowPlaying">KB Player ዝግጁ ነው...</div>
+        <div class="sticky-info" id="nowPlaying">KB Player Ready...</div>
         <div class="sticky-controls">
             <button onclick="playMedia()">▶</button>
             <button onclick="pauseMedia()">⏸</button>
         </div>
     </div>
 
-    <!-- JavaScript Functions for Player Actions -->
+    <!-- Bottom Navigation Bar -->
+    <div class="bottom-nav">
+        <button class="nav-item active" onclick="switchTab('playerTab', this)" id="navPlayer">Player</button>
+        <button class="nav-item" onclick="switchTab('musiciansTab', this)" id="navMusicians">Musicians</button>
+        <button class="nav-item" onclick="switchTab('radioTab', this)" id="navRadio">Radio</button>
+        <button class="nav-item" onclick="switchTab('downloadTab', this)" id="navDownload">Downloads</button>
+        <button class="nav-item" onclick="switchTab('settingsTab', this)" id="navSettings">Settings</button>
+    </div>
+
+    <!-- JavaScript Logic -->
     <script>
-        function playMedia() {
-            document.getElementById('nowPlaying').innerText = "እየተጫወተ ነው (Playing)...";
-        }
-        function pauseMedia() {
-            document.getElementById('nowPlaying').innerText = "ተቋርጧል (Paused)";
-        }
-        function changeSpeed() {
-            alert('የመጫወቻ ፍጥነት ወደ 1.5x ተቀይሯል');
-        }
-        function openTuner() {
-            alert('የባህላዊ ክራር መቃኛ (Krar Tuner) ተከፍቷል');
-        }
-        function openBpm() {
-            alert('ቴምፖ እና ሪትም ማስተካከያ ተከፍቷል (BPM 60-180)');
-        }
-        function playRadio(stationName) {
-            document.getElementById('nowPlaying').innerText = "ራዲዮ: " + stationName;
-            alert(stationName + " ስርጭት ተጀምሯል!");
+        // Dictionary for 4 Languages (English Default, Tigrinya, Amharic, Oromo)
+        const langData = {
+            en: {
+                appTitle: "KB Player Pro",
+                appSub: "Professional Audio, Video, Musicians & Radio Suite",
+                tPlayer: "Media Player Engine",
+                dPlayer: "Play local and offline audio/video files with advanced playback speed and pitch controls.",
+                btnPlay: "Play", btnPause: "Pause", btnSpeed: "Speed (1.0x)",
+                tMusicians: "Musicians' Special Toolset",
+                dMusicians: "Traditional Krar Tuner, BPM Metronome, and Audio Pitch Analyzer for professionals.",
+                btnTuner: "Krar Tuner", btnBpm: "BPM Metronome", btnPitch: "Pitch Shifter",
+                tRadio: "Live Radio Streams", btnListen: "Listen",
+                tDownload: "Offline Downloads", dDownload: "Manage your offline media storage and downloaded files securely.",
+                txtNoDownload: "No offline files found", btnScan: "Scan Storage",
+                tSettings: "Settings & Preferences", dSettings: "Select your preferred language (Default: English)",
+                lblLangSelect: "Select Language:", btnClearCache: "Clear Offline Cache",
+                navPlayer: "Player", navMusicians: "Musicians", navRadio: "Radio", navDownload: "Downloads", navSettings: "Settings",
+                readyText: "KB Player Ready...", playingText: "Playing Media...", pausedText: "Media Paused"
+            },
+            ti: {
+                appTitle: "ኬቢ ፕሌየር ፕሮ (KB Player Pro)",
+                appSub: "ናይ ሙዚቃ፡ ቪዲዮ፡ ሙዚቀኛታት መሳርሒን ራዲዮን ማእከል",
+                tPlayer: "ናይ ድምጺን ቪዲዮን ማጫወቻ",
+                dPlayer: "ናይ ውሽጢ ስልክኹም ፋይላት ብዝተፈላለየ ፍጥነትን ቃናን ከተጫወቱ ትኽእሉ።",
+                btnPlay: "ወልዕ (Play)", btnPause: "ዕጸው (Pause)", btnSpeed: "ፍጥነት (1.0x)",
+                tMusicians: "ፍሉይ ማእከል ሙዚቀኛታት",
+                dMusicians: "ባህላዊ መቃኛ ክራር፣ ቴምፖ (BPM) እና ናይ ድምጺ መዐቀኒ።",
+                btnTuner: "መቃኛ ክራር", btnBpm: "ቴምፖ (BPM)", btnPitch: "መቐየሪ ቃና",
+                tRadio: "ቀጥታ ስርጭት ራዲዮ ጣቢያዎች", btnListen: "ስማዕ",
+                tDownload: "ዝወረዱ ፋይላት (Downloads)", dDownload: "ኣብ ስልክኹም ዝተቐመጡ ውልቃዊ ፋይላት ምሕደራ።",
+                txtNoDownload: "ዝወረደ ፋይል የለን", btnScan: "ፋይላት ቃኝ (Scan)",
+                tSettings: "ማስተካከያ (Settings)", dSettings: "ዝደልይዎ ቋንቋ ይምረጡ (ነባሪ: እንግሊዝኛ)",
+                lblLangSelect: "ቋንቋ ምረጽ:", btnClearCache: "መሸጎጫ (Cache) ኣጽዳእ",
+                navPlayer: "ፕሌየር", navMusicians: "ሙዚቀኛታት", navRadio: "ራዲዮ", navDownload: "ውርዶች", navSettings: "ሴቲንግ",
+                readyText: "ኬቢ ፕሌየር ዝግጁ እዩ...", playingText: "እየተጫወተ እዩ...", pausedText: "ተቋሪጹ ኣሎ"
+            },
+            am: {
+                appTitle: "ኬቢ ፕሌየር ፕሮ (KB Player Pro)",
+                appSub: "የሙዚቃ፣ ቪዲዮ፣ ሙዚቀኞች ማዕከል እና የራዲዮ ስርጭት",
+                tPlayer: "የድምጽ እና ቪዲዮ ማጫወቻ",
+                dPlayer: "የድምጽ እና ቪዲዮ ፋይሎችን ያለእንከን ማጫወት እና ፍጥነት ማስተካከል ይችላሉ።",
+                btnPlay: "አጫወት", btnPause: "አቁም", btnSpeed: "ፍጥነት (1.0x)",
+                tMusicians: "ልዩ የሙዚቀኞች ማዕከል",
+                dMusicians: "ባህላዊ የክራር መቃኛ (Krar Tuner)፣ የቴምፖ መቆጣጠሪያ (BPM) እና ድምጽ አስተካካይ።",
+                btnTuner: "የክራር መቃኛ", btnBpm: "ቴምፖ (BPM)", btnPitch: "የድምጽ ቃና ማስተካከያ",
+                tRadio: "የራዲዮ ስርጭቶች", btnListen: "አዳምጥ",
+                tDownload: "የውርዶች ማዕከል (Downloads)", dDownload: "በስልክዎ ውስጥ የተቀመጡ ሚዲያ ፋይሎች ማስተዳደሪያ።",
+                txtNoDownload: "ምንም የወረደ ፋይል የለም", btnScan: "ፋይሎችን ቃኝ",
+                tSettings: "ማስተካከያ (Settings)", dSettings: "የሚፈልጉትን ቋንቋ ይምረጡ (ነባሪ: እንግሊዝኛ)",
+                lblLangSelect: "ቋንቋ ይምረጡ:", btnClearCache: "መሸጎጫ (Cache) አጽዳ",
+                navPlayer: "ፕሌየር", navMusicians: "ሙዚቀኞች", navRadio: "ራዲዮ", navDownload: "ውርዶች", navSettings: "ሴቲንግ",
+                readyText: "ኬቢ ፕሌየር ዝግጁ ነው...", playingText: "እየተጫወተ ነው...", pausedText: "ተቋርጧል"
+            },
+            om: {
+                appTitle: "KB Player Pro",
+                appSub: "Muuziqaa, Viidiyoo, Meeshaa Muuziqaa fi Raadiyoo",
+                tPlayer: "Taphachiisa Miidiyaa",
+                dPlayer: "Faayiloota sagalee fi viidiyoo keessanii saffisa barbaadamiin taphachiisaa.",
+                btnPlay: "Taphachiisi", btnPause: "Dhaabi", btnSpeed: "Saffisa (1.0x)",
+                tMusicians: "Iddoo Addaa Ogeeyyii Muuziqaa",
+                dMusicians: "Meeshaa krar suphuuf, BPM Metronome fi qorannoo sagalee.",
+                btnTuner: "Krar Suphaa (Tuner)", btnBpm: "BPM Metronome", btnPitch: "Pitch Shifter",
+                tRadio: "Raadiyoo Kallattii", btnListen: "Dhaggeeffadhu",
+                tDownload: "Buufannoo (Downloads)", dDownload: "Faayiloota miidiyaa keessan of-laan tursiisaa.",
+                txtNoDownload: "Faayiliin buufame hin jiru", btnScan: "Sakatta'i",
+                tSettings: "Qindaa'ina (Settings)", dSettings: "Afaan filadhaa (Default: English)",
+                lblLangSelect: "Afaan Filadhu:", btnClearCache: "Cache Qulqulleessi",
+                navPlayer: "Player", navMusicians: "Ogeeyyii", navRadio: "Raadiyoo", navDownload: "Buufannoo", navSettings: "Settings",
+                readyText: "KB Player Qophaa'eera...", playingText: "Taphachaa jira...", pausedText: "Dhaabbateera"
+            }
+        };
+
+        let currentLang = 'en';
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            const t = langData[lang];
+            
+            document.getElementById('appTitle').innerText = t.appTitle;
+            document.getElementById('appSub').innerText = t.appSub;
+            document.getElementById('tPlayer').innerText = t.tPlayer;
+            document.getElementById('dPlayer').innerText = t.dPlayer;
+            document.getElementById('btnPlay').innerText = t.btnPlay;
+            document.getElementById('btnPause').innerText = t.btnPause;
+            document.getElementById('btnSpeed').innerText = t.btnSpeed;
+            
+            document.getElementById('tMusicians').innerText = t.tMusicians;
+            document.getElementById('dMusicians').innerText = t.dMusicians;
+            document.getElementById('btnTuner').innerText = t.btnTuner;
+            document.getElementById('btnBpm').innerText = t.btnBpm;
+            document.getElementById('btnPitch').innerText = t.btnPitch;
+            
+            document.getElementById('tRadio').innerText = t.tRadio;
+            document.querySelectorAll('.btnListen').forEach(el => el.innerText = t.btnListen);
+            
+            document.getElementById('tDownload').innerText = t.tDownload;
+            document.getElementById('dDownload').innerText = t.dDownload;
+            document.getElementById('txtNoDownload').innerText = t.txtNoDownload;
+            document.getElementById('btnScan').innerText = t.btnScan;
+            
+            document.getElementById('tSettings').innerText = t.tSettings;
+            document.getElementById('dSettings').innerText = t.dSettings;
+            document.getElementById('lblLangSelect').innerText = t.lblLangSelect;
+            document.getElementById('btnClearCache').innerText = t.btnClearCache;
+            
+            document.getElementById('navPlayer').innerText = t.navPlayer;
+            document.getElementById('navMusicians').innerText = t.navMusicians;
+            document.getElementById('navRadio').innerText = t.navRadio;
+            document.getElementById('navDownload').innerText = t.navDownload;
+            document.getElementById('navSettings').innerText = t.navSettings;
+            
+            document.getElementById('nowPlaying').innerText = t.readyText;
         }
 
-        // Register Service Worker for Offline Mode
+        function switchTab(tabId, btnElement) {
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(nav => nav.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            btnElement.classList.add('active');
+        }
+
+        function playMedia() {
+            document.getElementById('nowPlaying').innerText = langData[currentLang].playingText;
+        }
+        function pauseMedia() {
+            document.getElementById('nowPlaying').innerText = langData[currentLang].pausedText;
+        }
+        function playRadio(stationName) {
+            document.getElementById('nowPlaying').innerText = "Radio: " + stationName;
+        }
+        function clearCacheData() {
+            if(confirm("Clear offline storage cache?")) {
+                caches.keys().then(names => {
+                    names.forEach(name => caches.delete(name));
+                });
+                alert("Cache cleared successfully!");
+            }
+        }
+
+        // Service Worker for Real PWA Installation
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/sw.js')
-                    .then((reg) => { console.log('KB Player Offline Active!', reg.scope); })
-                    .catch((err) => { console.log('Service Worker failed:', err); });
+                    .then((reg) => { console.log('KB Player PWA Active!', reg.scope); })
+                    .catch((err) => { console.log('Service Worker error:', err); });
             });
         }
     </script>
