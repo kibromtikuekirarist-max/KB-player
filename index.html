@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KB Player Pro - Final Edition</title>
+    <style>
+        :root { --bg: #090d16; --surface: #131c2e; --primary: #0ea5e9; --text: #f1f5f9; --accent: #10b981; --border: #1e293b; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; padding-bottom: 110px; }
+        
+        /* ቋሚ መቆጣጠሪያ ባር (Global Control Bar) */
+        .global-control-bar { background: #050b14; padding: 12px 15px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 101; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        .global-controls-row { display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 8px; }
+        .global-btn { background: #1e293b; color: #fff; border: 1px solid #334155; padding: 8px 12px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px; flex: 1; text-align: center; transition: 0.2s; }
+        .global-btn:active { background: var(--primary); color: #020617; }
+        .global-main-btn { background: var(--primary); color: #0f172a; border: none; font-weight: bold; }
+        
+        .tab-content { display: none; padding: 16px; animation: fadeIn 0.25s ease; }
+        .tab-content.active { display: block; }
+        
+        .nav-bar { position: fixed; bottom: 0; width: 100%; display: flex; justify-content: space-around; background: #050b14; padding: 10px 0; border-top: 1px solid var(--border); z-index: 100; box-sizing: border-box; }
+        .nav-btn { background: transparent; border: none; color: #64748b; font-size: 11px; font-weight: 600; cursor: pointer; padding: 6px 10px; border-radius: 8px; transition: 0.2s; white-space: nowrap; }
+        .nav-btn.active { color: var(--primary); background: rgba(14, 165, 233, 0.12); }
+
+        .card { background: var(--surface); padding: 16px; border-radius: 14px; margin-bottom: 14px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2); }
+        
+        input[type="text"], select, input[type="range"] { width: 100%; padding: 12px; background: #090d16; border: 1px solid #334155; color: #fff; border-radius: 10px; margin-bottom: 10px; font-size: 15px; box-sizing: border-box; }
+        
+        .file-item, .playlist-item, .radio-item { background: #090d16; padding: 12px 14px; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #1e293b; cursor: pointer; transition: 0.2s; }
+        .file-item:hover, .playlist-item:hover, .radio-item:hover { border-color: var(--primary); background: rgba(14, 165, 233, 0.05); }
+
+        /* የሴቲንግ ቼክቦክስ ስታይል */
+        .settings-checkbox-item { display: flex; align-items: center; justify-content: space-between; background: #090d16; padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; border: 1px solid #1e293b; font-size: 14px; }
+        .settings-checkbox-item input { width: 20px; height: 20px; accent-color: var(--primary); margin: 0; cursor: pointer; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <audio id="audioEngine" crossorigin="anonymous"></audio>
+
+    <!-- የላይኛው መቆጣጠሪያ ባር -->
+    <div class="global-control-bar">
+        <div style="font-size: 13px; color: var(--primary); margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+            🎧 <span id="globalTrackName" style="color: #fff; font-weight: 600;">ምንም ሙዚቃ አልተመረጠም</span>
+        </div>
+        
+        <div class="global-controls-row">
+            <button class="global-btn" onclick="playPrev()" id="lblPrev">⏮ Prev</button>
+            <button class="global-btn" onclick="skipTime(-5)">⏪ -5s</button>
+            <button class="global-btn global-main-btn" onclick="togglePlay()" id="globalPlayBtn">⏯ Play</button>
+            <button class="global-btn" onclick="skipTime(5)">5s ⏩</button>
+            <button class="global-btn" onclick="playNext()" id="lblNext">Next ⏭</button>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; gap: 10px;">
+            <span style="color: var(--primary); font-weight: bold;"><span id="lblSpeedTitle">⚡ Speed:</span> <span id="globalSpeedVal" style="color: var(--accent);">1.0x</span></span>
+            <input type="range" min="0.5" max="2.0" step="0.1" value="1.0" oninput="changeSpeed(this.value)" style="margin: 0; padding: 2px;">
+        </div>
+    </div>
+
+    <!-- 1. PLAYER TAB -->
+    <div id="playerTab" class="tab-content active" role="region">
+        <h2 style="margin-top:0; font-size: 18px;" id="lblNowPlaying">🎵 Now Playing</h2>
+        <div class="card" style="text-align: center;">
+            <h3 id="currentTrack" style="font-size: 16px; margin: 5px 0;">ምንም ሙዚቃ አልተመረጠም</h3>
+            <p id="playerStatus" style="color: #64748b; font-size: 13px; margin-bottom: 12px;">ፋይሎችን ከፋይል ማናጀር ይምረጡ</p>
+            
+            <input type="range" id="progressBar" value="0" min="0" max="100" step="1" oninput="seekAudio(this.value)" style="margin-bottom: 4px;">
+            <div style="display: flex; justify-content: space-between; font-size: 12px; color: #64748b;">
+                <span id="currentTime">00:00</span>
+                <span id="totalDuration">00:00</span>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h4 style="margin: 0 0 10px 0;" id="lblPlaylistTitle">playlist / የሙዚቃ ዝርዝር</h4>
+            <div id="playlistContainer" style="max-height: 220px; overflow-y: auto;">
+                <p style="color: #64748b; font-size: 13px; text-align: center;" id="lblPlaylistEmpty">ዝርዝር ባዶ ነው...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. FILE MANAGER TAB -->
+    <div id="fileManagerTab" class="tab-content" role="region">
+        <h2 style="margin-top:0; font-size: 18px;" id="lblFileMgrTitle">🗂 File Manager & Storage</h2>
+        <div class="card">
+            <p style="color: #94a3b8; font-size: 13px; margin-top: 0;" id="lblFileMgrDesc">ከስልክዎ ማከማቻ (Internal/SD Card) ፋይሎችን ይምረጡ፡</p>
+            
+            <input type="file" id="advancedFolderInput" multiple accept="audio/*" onchange="loadAdvancedFiles(event)" style="display: none;">
+            <button class="global-btn global-main-btn" onclick="document.getElementById('advancedFolderInput').click()" style="width: 100%; padding: 14px; margin-bottom: 12px;" id="lblBrowseBtn">📁 ፋይሎችን/ፎልደር አስስ (Browse Storage)</button>
+            
+            <input type="text" id="advancedSearch" placeholder="🔍 ፋይሎችን በስም ፈልግ..." oninput="filterAdvancedFiles(this.value)">
+            
+            <div style="font-size: 12px; color: var(--primary); margin-bottom: 8px;" id="fileCountInfo">ጠቅላላ ፋይሎች: 0</div>
+            
+            <div id="advancedFileContainer" style="max-height: 300px; overflow-y: auto;">
+                <p style="color: #64748b; font-size: 13px; text-align: center;" id="lblNoFiles">እስካሁን የተመረጡ ፋይሎች የሉም።</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. MUSICIANS TAB -->
+    <div id="musiciansTab" class="tab-content" role="region">
+        <h2 style="margin-top:0; font-size: 18px;" id="lblStudioTitle">🎚 Studio Pro (ሙዚቀኞች)</h2>
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 6px;">
+                <span style="font-weight: bold; color: var(--primary);" id="lblPitchTitle">🎵 ፒች / ቁልፍ ማስተካከያ</span>
+                <span id="pitchVal" style="color: var(--accent); font-weight: bold;">0 Semitones</span>
+            </div>
+            <input type="range" min="-12" max="12" step="1" value="0" oninput="changePitch(this.value)">
+            <p style="font-size: 12px; color: #64748b; margin-top: 8px;" id="lblPitchDesc">ለክራር እና ድምፅ ማስተካከያ የቁልፍ ከፍታ ማስተካከያ።</p>
+        </div>
+    </div>
+
+    <!-- 4. RADIO TAB -->
+    <div id="radioTab" class="tab-content" role="region">
+        <h2 style="margin-top:0; font-size: 18px;" id="lblRadioTitle">📻 Radio Stations</h2>
+        <div class="card">
+            <div class="radio-item" onclick="playRadio('Sheger FM 102.1', 'https://zeno.fm/radio/sheger-fm/')"><span>📻 Sheger FM 102.1</span> <span style="font-size:12px; color:var(--primary);">Play</span></div>
+            <div class="radio-item" onclick="playRadio('Bisrat FM 101.1', 'https://zeno.fm/radio/bisrat-fm/')"><span>📻 Bisrat FM 101.1</span> <span style="font-size:12px; color:var(--primary);">Play</span></div>
+            <div class="radio-item" onclick="playRadio('Tigray Regional Stream', 'https://zeno.fm/radio/tigrai-stream/')"><span>📻 Tigray Regional Stream / DW</span> <span style="font-size:12px; color:var(--primary);">Play</span></div>
+            <div class="radio-item" onclick="playRadio('Voice of Eritrea', 'https://zeno.fm/radio/eritrean-radio/')"><span>📻 Voice of Eritrea / Eri-Radio</span> <span style="font-size:12px; color:var(--primary);">Play</span></div>
+        </div>
+    </div>
+
+    <!-- 5. SETTINGS TAB -->
+    <div id="settingsTab" class="tab-content" role="region">
+        <h2 style="margin-top:0; font-size: 18px;" id="lblSettingsTitle">⚙️ Settings</h2>
+        
+        <!-- የቋንቋ ምርጫ ክፍል -->
+        <div class="card">
+            <p style="font-size: 13px; font-weight: bold; color: var(--primary);" id="lblLangSelectTitle">ቋንቋ / Language / ቋንቋ:</p>
+            <select id="languageSelector" onchange="changeLanguage(this.value)">
+                <option value="am">አማርኛ</option>
+                <option value="ti">ትግርኛ</option>
+                <option value="en">English</option>
+            </select>
+        </div>
+
+        <!-- ታቦችን የማብራት/የማጥፋት (Enable/Disable Tabs) ክፍል -->
+        <div class="card">
+            <p style="font-size: 13px; font-weight: bold; color: var(--primary); margin-top:0;" id="lblToggleTabsTitle">የታቦች ማስተካከያ (የማይፈልጉትን ይዝጉ)</p>
+            
+            <div class="settings-checkbox-item">
+                <span id="lblTabPlayer">🎵 Player</span>
+                <input type="checkbox" id="chkPlayer" checked onchange="toggleTabVisibility('playerTab', 'navPlayerBtn', this.checked)">
+            </div>
+            <div class="settings-checkbox-item">
+                <span id="lblTabFiles">🗂 Files</span>
+                <input type="checkbox" id="chkFiles" checked onchange="toggleTabVisibility('fileManagerTab', 'navFilesBtn', this.checked)">
+            </div>
+            <div class="settings-checkbox-item">
+                <span id="lblTabStudio">🎚 Studio</span>
+                <input type="checkbox" id="chkStudio" checked onchange="toggleTabVisibility('musiciansTab', 'navStudioBtn', this.checked)">
+            </div>
+            <div class="settings-checkbox-item">
+                <span id="lblTabRadio">📻 Radio</span>
+                <input type="checkbox" id="chkRadio" checked onchange="toggleTabVisibility('radioTab', 'navRadioBtn', this.checked)">
+            </div>
+        </div>
+    </div>
+
+    <!-- ሼር የተደረገ የናቪጌሽን ባር -->
+    <nav class="nav-bar">
+        <button class="nav-btn active" id="navPlayerBtn" onclick="switchTab('playerTab', this)">🎵 Player</button>
+        <button class="nav-btn" id="navFilesBtn" onclick="switchTab('fileManagerTab', this)">🗂 Files</button>
+        <button class="nav-btn" id="navStudioBtn" onclick="switchTab('musiciansTab', this)">🎚 Studio</button>
+        <button class="nav-btn" id="navRadioBtn" onclick="switchTab('radioTab', this)">📻 Radio</button>
+        <button class="nav-btn" id="navSettingsBtn" onclick="switchTab('settingsTab', this)">⚙️ Settings</button>
+    </nav>
+
+    <script>
+        const audioEngine = document.getElementById('audioEngine');
+        let masterFiles = [];
+        let currentIndex = 0;
+
+        audioEngine.addEventListener('timeupdate', updateProgress);
+        audioEngine.addEventListener('ended', playNext);
+
+        function switchTab(tabId, btnElement) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            btnElement.classList.add('active');
+        }
+
+        // ታቦችን ከሴቲንግ መደበቅ ወይም ማሳየት
+        function toggleTabVisibility(tabId, btnId, isVisible) {
+            const btn = document.getElementById(btnId);
+            if (isVisible) {
+                btn.style.display = 'block';
+            } else {
+                btn.style.display = 'none';
+                if(document.getElementById(tabId).classList.contains('active')) {
+                    switchTab('playerTab', document.getElementById('navPlayerBtn'));
+                }
+            }
+        }
+
+        // የቋንቋዎች መዝገብ
+        const translations = {
+            am: {
+                prev: "⏮ ቀድሞ", next: "ቀጣይ ⏭", speed: "⚡ ፍጥነት:",
+                nowPlaying: "🎵 አሁን እየተጫወተ ያለ", noTrack: "ምንም ሙዚቃ አልተመረጠም", status: "ፋይሎችን ከፋይል ማናጀር ይምረጡ",
+                playlist: "የሙዚቃ ዝርዝር (Playlist)", emptyList: "ዝርዝር ባዶ ነው...",
+                fileMgrTitle: "🗂 ፋይል ማናጀር እና ማከማቻ", fileMgrDesc: "ከስልክዎ ማከማቻ (Internal/SD Card) ፋይሎችን ይምረጡ፡",
+                browse: "📁 ፋይሎችን/ፎልደር አስስ (Browse Storage)", searchPh: "🔍 ፋይሎችን በስም ፈልግ...", noFiles: "እስካሁን የተመረጡ ፋይሎች የሉም።",
+                studioTitle: "🎚 ስቱዲዮ ፕሮ (ሙዚቀኞች)", pitchTitle: "🎵 ፒች / ቁልፍ ማስተካከያ", pitchDesc: "ለክራር እና ድምፅ ማስተካከያ የቁልፍ ከፍታ ማስተካከያ።",
+                radioTitle: "📻 የሬዲዮ ጣቢያዎች", settingsTitle: "⚙️ Settings",
+                langTitle: "ቋንቋ / Language / ቋንቋ:", toggleTitle: "የታቦች ማስተካከያ (የማይፈልጉትን ይዝጉ)",
+                tabPlayer: "🎵 Player", tabFiles: "🗂 Files", tabStudio: "🎚 Studio", tabRadio: "📻 Radio"
+            },
+            ti: {
+                prev: "⏮ ቅድሚ", next: "ቀጻሊ ⏭", speed: "⚡ ቅልጥፍና:",
+                nowPlaying: "🎵 ሕጂ ዝጽወት ዘሎ", noTrack: "ዝኾነ ሙዚቃ ኣይተመረጸን", status: "ፋይላት ካብ ፋይል ማናጀር ሕረ",
+                playlist: "ዝርዝር ሙዚቃ (Playlist)", emptyList: "ዝርዝር ባዶ እዩ...",
+                fileMgrTitle: "🗂 File Manager & Storage", fileMgrDesc: "ካብ ስልኪኻ ማከማቻ ፋይላት ሕረ:",
+                browse: "📁 ፋይላት/ፎልደር ድለዩ (Browse Storage)", searchPh: "🔍 ፋይላት ብስም ድለ...", noFiles: "ክሳብ ሕጂ ዝተመርጹ ፋይላት የለዉን።",
+                studioTitle: "🎚 Studio Pro (ሙዚቀኛታት)", pitchTitle: "🎵 ፒች / ቁልፍ ምዕራይ", pitchDesc: "ንክራርን ድምጽን ዝኸውን ቁልፍ መዐረዪ።",
+                radioTitle: "📻 Radio Stations", settingsTitle: "⚙️ Settings",
+                langTitle: "ቋንቋ / Language / ቋንቋ:", toggleTitle: "ናይ ታባት ምዕራብ (ዘይትደልይዎ ዕጸዉ)",
+                tabPlayer: "🎵 Player", tabFiles: "🗂 Files", tabStudio: "🎚 Studio", tabRadio: "📻 Radio"
+            },
+            en: {
+                prev: "⏮ Prev", next: "Next ⏭", speed: "⚡ Speed:",
+                nowPlaying: "🎵 Now Playing", noTrack: "No track selected", status: "Select files from File Manager",
+                playlist: "playlist / የሙዚቃ ዝርዝር", emptyList: "Playlist is empty...",
+                fileMgrTitle: "🗂 File Manager & Storage", fileMgrDesc: "Select audio files from your phone storage:",
+                browse: "📁 Browse Files/Folder (Browse Storage)", searchPh: "🔍 Search files by name...", noFiles: "No files selected yet.",
+                studioTitle: "🎚 Studio Pro (ሙዚቀኞች)", pitchTitle: "🎵 ፒች / ቁልፍ ማስተካከያ", pitchDesc: "Key adjustment tool for Krar and vocal tuning.",
+                radioTitle: "📻 Radio Stations", settingsTitle: "⚙️ Settings",
+                langTitle: "ቋንቋ / Language / ቋንቋ:", toggleTitle: "Tab Visibility Settings",
+                tabPlayer: "🎵 Player", tabFiles: "🗂 Files", tabStudio: "🎚 Studio", tabRadio: "📻 Radio"
+            }
+        };
+
+        function changeLanguage(lang) {
+            const t = translations[lang];
+            if (!t) return;
+            document.getElementById('lblPrev').innerText = t.prev;
+            document.getElementById('lblNext').innerText = t.next;
+            document.getElementById('lblSpeedTitle').innerText = t.speed;
+            document.getElementById('lblNowPlaying').innerText = t.nowPlaying;
+            document.getElementById('lblPlaylistTitle').innerText = t.playlist;
+            document.getElementById('lblPlaylistEmpty').innerText = t.emptyList;
+            document.getElementById('lblFileMgrTitle').innerText = t.fileMgrTitle;
+            document.getElementById('lblFileMgrDesc').innerText = t.fileMgrDesc;
+            document.getElementById('lblBrowseBtn').innerText = t.browse;
+            document.getElementById('advancedSearch').placeholder = t.searchPh;
+            document.getElementById('lblNoFiles').innerText = t.noFiles;
+            document.getElementById('lblStudioTitle').innerText = t.studioTitle;
+            document.getElementById('lblPitchTitle').innerText = t.pitchTitle;
+            document.getElementById('lblPitchDesc').innerText = t.pitchDesc;
+            document.getElementById('lblRadioTitle').innerText = t.radioTitle;
+            document.getElementById('lblSettingsTitle').innerText = t.settingsTitle;
+            document.getElementById('lblLangSelectTitle').innerText = t.langTitle;
+            document.getElementById('lblToggleTabsTitle').innerText = t.toggleTitle;
+            document.getElementById('lblTabPlayer').innerText = t.tabPlayer;
+            document.getElementById('lblTabFiles').innerText = t.tabFiles;
+            document.getElementById('lblTabStudio').innerText = t.tabStudio;
+            document.getElementById('lblTabRadio').innerText = t.tabRadio;
+            
+            document.getElementById('navPlayerBtn').innerText = t.tabPlayer;
+            document.getElementById('navFilesBtn').innerText = t.tabFiles;
+            document.getElementById('navStudioBtn').innerText = t.tabStudio;
+            document.getElementById('navRadioBtn').innerText = t.tabRadio;
+        }
+
+        function togglePlay() {
+            if (!audioEngine.src) { alert("እባክዎ መጀመሪያ ፋይል ይምረጡ!"); return; }
+            if (audioEngine.paused) {
+                audioEngine.play();
+                document.getElementById('globalPlayBtn').innerText = "⏸ Pause";
+            } else {
+                audioEngine.pause();
+                document.getElementById('globalPlayBtn').innerText = "⏯ Play";
+            }
+        }
+
+        function loadAdvancedFiles(event) {
+            const files = event.target.files;
+            if (files.length === 0) return;
+            masterFiles = [];
+            for (let i = 0; i < files.length; i++) {
+                masterFiles.push({
+                    name: files[i].name,
+                    size: (files[i].size / (1024*1024)).toFixed(1) + " MB",
+                    url: URL.createObjectURL(files[i])
+                });
+            }
+            document.getElementById('fileCountInfo').innerText = `ጠቅላላ ፋይሎች: ${masterFiles.length}`;
+            renderAdvancedList(masterFiles);
+            renderPlaylist();
+            playTrack(0);
+        }
+
+        function renderAdvancedList(items) {
+            const container = document.getElementById('advancedFileContainer');
+            container.innerHTML = "";
+            if (items.length === 0) {
+                container.innerHTML = `<p style="color: #64748b; font-size: 13px; text-align: center;">ምንም ፋይል አልተገኘም</p>`;
+                return;
+            }
+            items.forEach((file) => {
+                let originalIndex = masterFiles.findIndex(f => f.url === file.url);
+                let item = document.createElement('div');
+                item.className = 'file-item';
+                item.innerHTML = `<div><div style="font-weight:600;">🎵 ${file.name}</div><div style="font-size:11px; color:#64748b;">${file.size}</div></div> <span style="font-size:12px; color:var(--primary); font-weight:bold;">Play</span>`;
+                item.onclick = function() { playTrack(originalIndex); };
+                container.appendChild(item);
+            });
+        }
+
+        function filterAdvancedFiles(query) {
+            let filtered = masterFiles.filter(file => file.name.toLowerCase().includes(query.toLowerCase()));
+            renderAdvancedList(filtered);
+        }
+
+        function renderPlaylist() {
+            const container = document.getElementById('playlistContainer');
+            container.innerHTML = "";
+            masterFiles.forEach((track, index) => {
+                let item = document.createElement('div');
+                item.className = 'playlist-item' + (index === currentIndex ? ' active' : '');
+                item.innerHTML = `🎵 ${track.name} <span style="font-size:11px; color:var(--primary);">${index === currentIndex ? 'Playing' : ''}</span>`;
+                item.onclick = function() { playTrack(index); };
+                container.appendChild(item);
+            });
+        }
+
+        function playTrack(index) {
+            if (masterFiles.length === 0 || index < 0) return;
+            currentIndex = index;
+            audioEngine.src = masterFiles[currentIndex].url;
+            audioEngine.play().then(() => {
+                let name = masterFiles[currentIndex].name;
+                document.getElementById('currentTrack').innerText = name;
+                document.getElementById('globalTrackName').innerText = name;
+                document.getElementById('globalPlayBtn').innerText = "⏸ Pause";
+                renderPlaylist();
+            });
+        }
+
+        function playRadio(name, url) {
+            audioEngine.src = url;
+            audioEngine.play().then(() => {
+                document.getElementById('currentTrack').innerText = "📻 " + name;
+                document.getElementById('globalTrackName').innerText = "📻 " + name;
+                document.getElementById('globalPlayBtn').innerText = "⏸ Pause";
+            });
+        }
+
+        function playNext() {
+            if (masterFiles.length === 0) return;
+            currentIndex = (currentIndex + 1) % masterFiles.length;
+            playTrack(currentIndex);
+        }
+
+        function playPrev() {
+            if (masterFiles.length === 0) return;
+            currentIndex = (currentIndex - 1 + masterFiles.length) % masterFiles.length;
+            playTrack(currentIndex);
+        }
+
+        function skipTime(sec) {
+            if (!audioEngine.src || isNaN(audioEngine.duration)) return;
+            audioEngine.currentTime = Math.min(Math.max(audioEngine.currentTime + sec, 0), audioEngine.duration);
+        }
+
+        function updateProgress() {
+            const bar = document.getElementById('progressBar');
+            if (audioEngine.duration && !isNaN(audioEngine.duration)) {
+                bar.value = (audioEngine.currentTime / audioEngine.duration) * 100;
+                document.getElementById('currentTime').innerText = formatTime(audioEngine.currentTime);
+                document.getElementById('totalDuration').innerText = formatTime(audioEngine.duration);
+            }
+        }
+
+        function seekAudio(val) {
+            if (audioEngine.duration && !isNaN(audioEngine.duration)) {
+                audioEngine.currentTime = (val / 100) * audioEngine.duration;
+            }
+        }
+
+        function formatTime(sec) {
+            let m = Math.floor(sec / 60);
+            let s = Math.floor(sec % 60);
+            return (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
+        }
+
+        function changeSpeed(val) {
+            audioEngine.playbackRate = parseFloat(val);
+            document.getElementById('globalSpeedVal').innerText = val + "x";
+        }
+
+        function changePitch(val) {
+            document.getElementById('pitchVal').innerText = (val > 0 ? "+" + val : val) + " Semitones";
+        }
+    </script>
+</body>
+</html>
