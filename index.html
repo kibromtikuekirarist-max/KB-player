@@ -106,5 +106,16 @@
         <p>እንግሊዝኛ፣ አማርኛ፣ ትግርኛ እና ኦሮምኛ ቋንቋዎችን ማስተካከል የሚቻልበት ዝግጅት።</p>
     </div>
 
+    <!-- ሰርቪስ ወርከርን ለማንቃት እና ኦፍላይን እንዲሰራ የሚያስችል ስክሪፕት በአንድ ላይ -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((reg) => { console.log('KB Player Offline Mode Active!', reg.scope); })
+                    .catch((err) => { console.log('Service Worker registration failed:', err); });
+            });
+        }
+    </script>
+
 </body>
 </html>
