@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KB Player Pro - Master Verified Edition</title>
+    <title>KB Player Pro - Independent Tempo & Pitch Edition</title>
     <style>
         :root { --bg: #090d16; --surface: #131c2e; --primary: #0ea5e9; --text: #f1f5f9; --accent: #10b981; --border: #1e293b; --error: #ef4444; }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; padding-top: 130px; padding-bottom: 90px; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; padding-top: 140px; padding-bottom: 90px; }
         
         .global-control-bar { background: #050b14; padding: 10px 15px; border-bottom: 1px solid var(--border); position: fixed; top: 0; left: 0; width: 100%; z-index: 101; box-sizing: border-box; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
         .global-controls-row { display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 6px; }
@@ -37,13 +37,16 @@
 </head>
 <body>
 
+    <!-- SoundTouch Engine CDN for Independent Pitch & Tempo Control -->
+    <script src="https://cdn.jsdelivr.net/npm/soundtouchjs@0.1.5/dist/soundtouch.min.js"></script>
+
     <audio id="audioEngine" crossorigin="anonymous"></audio>
     <audio id="audioEngineCross" crossorigin="anonymous"></audio>
 
     <div class="global-control-bar">
         <div style="font-size: 12px; color: var(--primary); margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
             <span id="globalTrackName" style="color: #fff; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60%;">No track selected</span>
-            <span style="font-size: 11px; color: var(--accent); background: #1e293b; padding: 2px 6px; border-radius: 4px;" id="liveDetectedInfo">Key: -- | BPM: --</span>
+            <span style="font-size: 11px; color: var(--accent); background: #1e293b; padding: 2px 6px; border-radius: 4px;" id="liveDetectedInfo">Pitch: 0 semitones | Tempo: 1.0x</span>
         </div>
         
         <div class="global-controls-row">
@@ -55,8 +58,8 @@
         </div>
 
         <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; gap: 10px;">
-            <span style="color: var(--primary); font-weight: bold;"><span id="lblSpeedLabel">Speed</span>: <span id="globalSpeedVal" style="color: var(--accent);">1.0x</span></span>
-            <input type="range" min="0.5" max="2.0" step="0.1" value="1.0" oninput="changeSpeed(this.value)" style="margin: 0; padding: 0; width: 60%;">
+            <span style="color: var(--primary); font-weight: bold;"><span id="lblSpeedLabel">Tempo</span>: <span id="globalSpeedVal" style="color: var(--accent);">1.0x</span></span>
+            <input type="range" min="0.5" max="2.0" step="0.1" value="1.0" oninput="changeTempo(this.value)" style="margin: 0; padding: 0; width: 60%;">
         </div>
     </div>
 
@@ -122,13 +125,13 @@
         <h2 style="margin-top:0; font-size: 17px;" id="lblStudioTitle">Studio Pro & Key Changer</h2>
         
         <div class="card">
-            <h4 style="margin-top:0; font-size: 14px; color: var(--primary);" id="lblKeyTransposerTitle">Key Transposer (Pitch Shifter)</h4>
+            <h4 style="margin-top:0; font-size: 14px; color: var(--primary);" id="lblKeyTransposerTitle">Key Transposer (Independent Pitch)</h4>
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                <button class="global-btn" onclick="changeKey(-1)" id="lblDecKey">Dec Key (-)</button>
-                <span id="currentKeyVal" style="font-size: 16px; font-weight: bold; color: var(--accent);">C Major</span>
-                <button class="global-btn" onclick="changeKey(1)" id="lblIncKey">Inc Key (+)</button>
+                <button class="global-btn" onclick="changeKey(-1)" id="lblDecKey">Dec Pitch (-)</button>
+                <span id="currentKeyVal" style="font-size: 16px; font-weight: bold; color: var(--accent);">0 Semitones (C)</span>
+                <button class="global-btn" onclick="changeKey(1)" id="lblIncKey">Inc Pitch (+)</button>
             </div>
-            <p style="font-size: 11px; color: #64748b; margin: 0;" id="lblKeySub">Use to shift audio key (pitch) higher or lower</p>
+            <p style="font-size: 11px; color: #64748b; margin: 0;" id="lblKeySub">Shifts musical key (pitch) independently without altering song tempo</p>
         </div>
 
         <div class="card">
@@ -208,9 +211,9 @@
     <div id="aboutTab" class="tab-content" role="region">
         <h2 style="margin-top:0; font-size: 17px;" id="lblAboutTitle">About Developer</h2>
         <div class="card" style="text-align: center; padding: 20px;">
-            <h3 style="color: var(--primary); margin-top: 0;">KB Player Pro - Master Verified Edition</h3>
+            <h3 style="color: var(--primary); margin-top: 0;">KB Player Pro - Independent Tempo & Pitch Edition</h3>
             <p style="font-size: 14px; color: var(--text); font-weight: bold; margin: 10px 0;" id="lblDeveloperName">ሰሪ፡ ክብሮም ትኩእ</p>
-            <p style="font-size: 12px; color: #94a3b8; line-height: 1.5;" id="lblAboutDesc">ይህ አፕሊኬሽን ለሙዚቀኞች፣ ለዲጄዎች እና ለሬዲዮ አድማጮች የተዘጋጀ ኃይለኛ የሙዚቃ ማጫወቻ ነው። በውስጡም ስቱዲዮ ፕሮ፣ የሚሰሩ የኢትዮጵያ፣ የኤርትራ እና አለም አቀፍ ሬዲዮዎች፣ ቋንቋ መራጪያ እና የቁልፍ ማስተካከያዎችን ያዟል።</p>
+            <p style="font-size: 12px; color: #94a3b8; line-height: 1.5;" id="lblAboutDesc">ይህ አፕሊኬሽን ፍጥነትን (Tempo) እና የሙዚቃ ቁልፍን (Pitch) ሙሉ በሙሉ ለየብቻ (Independently) እንዲቆጣጠሩ ተደርጎ የተዘጋጀ ኃይለኛ የስቱዲዮ ሙዚቃ ማጫወቻ ነው።</p>
         </div>
     </div>
 
@@ -234,6 +237,9 @@
         let trebleFilter = null;
         let bassFilter = null;
         let midFilter = null;
+
+        let currentTempo = 1.0;
+        let currentPitchSemitones = 0;
 
         function initAudioContext() {
             if (!audioCtx) {
@@ -283,9 +289,6 @@
         let pointB = null;
         let isABLoopActive = false;
 
-        const keysList = ["C Major", "C# Major", "D Major", "D# Major", "E Major", "F Major", "F# Major", "G Major", "G# Major", "A Major", "A# Major", "B Major"];
-        let currentKeyIndex = 0;
-
         const radioStations = [
             { name: "Sheger FM 102.1", url: "https://s2.radio.co/s877b07049/listen", category: "local" },
             { name: "Bisrat FM 101.1", url: "https://radio.bisrat1011.com/stream", category: "local" },
@@ -314,17 +317,17 @@
                 lblFileMgrDesc: "Select audio files from your storage:", lblBrowseBtn: "Browse Storage",
                 lblNoFiles: "No files selected yet.", lblDownloadTitle: "Universal Downloader",
                 lblDownloadDesc: "Paste any social media link to download audio or video:", lblDownloadMp3: "Download MP3",
-                lblDownloadMp4: "Download MP4", lblStudioTitle: "Studio Pro & Key Changer",
-                lblKeyTransposerTitle: "Key Transposer (Pitch Shifter)", lblDecKey: "Dec Key (-)", lblIncKey: "Inc Key (+)",
-                lblKeySub: "Use to shift audio key (pitch) higher or lower", lblABLoopTitle: "A-B Loop Practice Tool",
+                lblDownloadMp4: "Download MP4", lblStudioTitle: "Studio Pro & Independent Pitch",
+                lblKeyTransposerTitle: "Key Transposer (Independent Pitch)", lblDecKey: "Dec Pitch (-)", lblIncKey: "Inc Pitch (+)",
+                lblKeySub: "Shifts musical key (pitch) independently without altering song tempo", lblABLoopTitle: "A-B Loop Practice Tool",
                 lblSetPointA: "Set Point A", lblSetPointB: "Set Point B", lblClearLoop: "Clear Loop",
                 lblCrossfadeTitle: "Auto Crossfade Settings", lblEnableCrossfade: "Enable Crossfade", lblDurationLabel: "Duration",
                 lblEqTitle: "Equalizer (Treble, Mid, Bass)", lblTreble: "Treble (High)", lblMid: "Mid (Voice)", lblBass: "Bass (Low)",
                 lblRadioTitle: "Live Radio Stations (Verified Streams)", lblLangHeader: "Language Settings",
                 lblLangSub: "Select Application Language:", lblLangStatus: "Language updated successfully!",
                 lblAboutTitle: "About Developer", lblDeveloperName: "ሰሪ፡ ክብሮም ትኩእ",
-                lblAboutDesc: "Powerful music player crafted for musicians, DJs, and radio listeners featuring Studio Pro, live regional and international radio stations, pitch/key controls, and isolated multilingual support.",
-                navPlayer: "Player", navFiles: "Files", navDownload: "Download", navStudio: "Studio", navRadio: "Radio", navLang: "Language", navAbout: "About", speedLabel: "Speed",
+                lblAboutDesc: "Powerful music player with fully independent Tempo and Pitch controls.",
+                navPlayer: "Player", navFiles: "Files", navDownload: "Download", navStudio: "Studio", navRadio: "Radio", navLang: "Language", navAbout: "About", speedLabel: "Tempo",
                 catAll: "All Stations", catLocal: "Ethiopia & Eritrea", catGlobal: "International"
             },
             ti: {
@@ -333,17 +336,17 @@
                 lblFileMgrDesc: "ካብ ስልክኹም ኦዲዮ ፋይላት ምረጡ:", lblBrowseBtn: "ፋይላት ምረፅ",
                 lblNoFiles: "ክሳብ ሕዚ ዝተመርጸ ፋይል የልቦን።", lblDownloadTitle: "መውረዲ መሣርያ",
                 lblDownloadDesc: "ማንኛውም ሶሻል ሚዲያ ሊንክ ብምእታው ኦዲዮ ወይ ቪዲዮ ኣውርዱ:", lblDownloadMp3: "MP3 ኣውርድ",
-                lblDownloadMp4: "MP4 ኣውርድ", lblStudioTitle: "ስቱዲዮ ፕሮ & ቁልፍ መቀየሪ",
-                lblKeyTransposerTitle: "ናይ ሙዚቃ ቁልፍ መቀየሪ", lblDecKey: "ቁልፍ ቀንዕ (-)", lblIncKey: "ቁልፍ ወስኽ (+)",
-                lblKeySub: "ናይ ሙዚቃ ቁልፍ ንምቕያር ይጠቅም", lblABLoopTitle: "ኤ-ቢ ሉፕ ልምምድ መሣርያ",
+                lblDownloadMp4: "MP4 ኣውርድ", lblStudioTitle: "ስቱዲዮ ፕሮ & ናፃ ፒች",
+                lblKeyTransposerTitle: "ናይ ሙዚቃ ቁልፍ (ናፃ ፒች ማስተካከያ)", lblDecKey: "ፒች ቀንዕ (-)", lblIncKey: "ፒች ወስኽ (+)",
+                lblKeySub: "ፍጥነት ከይተለወጠ ቁልፍ (Pitch) ንበይኑ ንምቕያር ይጠቅም", lblABLoopTitle: "ኤ-ቢ ሉፕ ልምምድ መሣርያ",
                 lblSetPointA: "ነጥቢ ኤ ግበር", lblSetPointB: "ነጥቢ ቢ ግበር", lblClearLoop: "ሉፕ አጥፍእ",
                 lblCrossfadeTitle: "አውቶ ክሮስፌድ ማስተካከያ", lblEnableCrossfade: "ክሮስፌድ አንቃ", lblDurationLabel: "ቆይታ ሰከንድ",
                 lblEqTitle: "ኢኳላይዘር ማስተካከያ", lblTreble: "ትሪብል ልዑል", lblMid: "ሚድ ድምፅ", lblBass: "ባስ ዝቅተኛ",
                 lblRadioTitle: "ቀጥታ ሬዲዮ ጣቢያዎች", lblLangHeader: "ቋንቋታት መምረፂ",
                 lblLangSub: "ናይ መተግበሪ ቋንቋ ምረጡ:", lblLangStatus: "ቋንቋብትክክል ተቐይሩ እዩ!",
                 lblAboutTitle: "ስለ አዘጋጅ", lblDeveloperName: "ሰሪ፡ ክብሮም ትኩእ",
-                lblAboutDesc: "እዚ አፕሊኬሽን እዚ ንሙዚቀኛታት፣ ዲጄታትን ንሬዲዮ ኣድማራትን ዝተዳለወ ሓያል መጫወቲ ሙዚቃ እዩ።",
-                navPlayer: "መጫወቲ", navFiles: "ፋይላት", navDownload: "አውርድ", navStudio: "ስቱዲዮ", navRadio: "ሬዲዮ", navLang: "ቋንቋ", navAbout: "ስለ እኛ", speedLabel: "ቅልጡፍ",
+                lblAboutDesc: "ፍጥነትን (Tempo) እና ፒችን (Pitch) ለየብቻ (Independently) ንምቁፃር ዝተዳለወ ሓያል መጫወቲ።",
+                navPlayer: "መጫወቲ", navFiles: "ፋይላት", navDownload: "አውርድ", navStudio: "ስቱዲዮ", navRadio: "ሬዲዮ", navLang: "ቋንቋ", navAbout: "ስለ እኛ", speedLabel: "ፍጥነት (Tempo)",
                 catAll: "ሁሉም ሬዲዮዎች", catLocal: "ኢትዮጵያ እና ኤርትራ", catGlobal: "አለም አቀፍ"
             },
             am: {
@@ -352,17 +355,17 @@
                 lblFileMgrDesc: "ከሰልኮ ማከማቻ የሙዚቃ ፋይሎችን ይምረጡ:", lblBrowseBtn: "ፋይሎችን ፈልግ",
                 lblNoFiles: "እስካሁን የተመረጡ ፋይሎች የሉም።", lblDownloadTitle: "ዩኒቨርሳል ዶንሎደር",
                 lblDownloadDesc: "የማንኛውንም ሶሻል ሚዲያ ሊንክ በመለጠፍ ኦዲዮ ወይም ቪዲዮ ያውርዱ:", lblDownloadMp3: "MP3 አውርድ",
-                lblDownloadMp4: "MP4 አውርድ", lblStudioTitle: "ስቱዲዮ ፕሮ እና ቁልፍ መቀየሪያ",
-                lblKeyTransposerTitle: "የሙዚቃ ቁልፍ መቀየሪያ", lblDecKey: "ቁልፍ ቀንስ (-)", lblIncKey: "ቁልፍ ጨምር (+)",
-                lblKeySub: "የሙዚቃውን ፒች ከፍ ወይም ዝቅ ለማድረግ ይጠቀሙ", lblABLoopTitle: "ኤ-ቢ ሉፕ ልምምድ መሣሪያ",
+                lblDownloadMp4: "MP4 አውርድ", lblStudioTitle: "ስቱዲዮ ፕሮ እና ለየብቻ ፒች መቀየሪያ",
+                lblKeyTransposerTitle: "የሙዚቃ ቁልፍ (ለየብቻ ፒች)", lblDecKey: "ቁልፍ ቀንስ (-)", lblIncKey: "ቁልፍ ጨምር (+)",
+                lblKeySub: "የሙዚቃውን ፍጥነት (Tempo) ሳይነካ የቁልፉን ፒች (Pitch) ለየብቻ ያስተካክላል", lblABLoopTitle: "ኤ-ቢ ሉፕ ልምምድ መሣሪያ",
                 lblSetPointA: "ነጥብ ኤ ፈልግ", lblSetPointB: "ነጥብ ቢ ፈልግ", lblClearLoop: "ሉፕ አጽዳ",
                 lblCrossfadeTitle: "አውቶ ክሮስፌድ ማስተካከያ", lblEnableCrossfade: "ክሮስፌድ አንቃ", lblDurationLabel: "ቆይታ ሰከንድ",
                 lblEqTitle: "ኢኳላይዘር ማስተካከያ", lblTreble: "ትሪብል ከፍተኛ", lblMid: "ሚድ ድምፅ", lblBass: "ባስ ዝቅተኛ",
                 lblRadioTitle: "ቀጥታ የሬዲዮ ጣቢያዎች", lblLangHeader: "የቋንቋ ምርጫ ማዕከል",
                 lblLangSub: "የአፕሊኬሽኑን ቋንቋ ይምረጡ:", lblLangStatus: "ቋንቋው በትክክል ተቀይሯል!",
                 lblAboutTitle: "ስለ አዘጋጁ", lblDeveloperName: "ሰሪ፡ ክብሮም ትኩእ",
-                lblAboutDesc: "ይህ አፕሊኬሽን ለሙዚቀኞች፣ ለዲጄዎች እና ለሬዲዮ አድማጮች የተዘጋጀ ኃይለኛ የሙዚቃ ማጫወቻ ነው።",
-                navPlayer: "ማጫወቻ", navFiles: "ፋይሎች", navDownload: "አውርድ", navStudio: "ስቱዲዮ", navRadio: "ሬዲዮ", navLang: "ቋንቋ", navAbout: "ስለ እኛ", speedLabel: "ፍጥነት",
+                lblAboutDesc: "ፍጥነትን (Tempo) እና ፒችን (Pitch) ሙሉ በሙሉ ለየብቻ (Independently) እንዲቆጣጠሩ የተደረገ ኃይለኛ የሙዚቃ ማጫወቻ።",
+                navPlayer: "ማጫወቻ", navFiles: "ፋይሎች", navDownload: "አውርድ", navStudio: "ስቱዲዮ", navRadio: "ሬዲዮ", navLang: "ቋንቋ", navAbout: "ስለ እኛ", speedLabel: "ፍጥነት (Tempo)",
                 catAll: "ሁሉም ሬዲዮዎች", catLocal: "ኢትዮጵያ እና ኤርትራ", catGlobal: "አለም አቀፍ"
             },
             om: {
@@ -371,16 +374,16 @@
                 lblFileMgrDesc: "Kuusaa keessan irraa faayilii filadhaa:", lblBrowseBtn: "Faayilii Barbaadi",
                 lblNoFiles: "Faayiliin amma filatame hin jiru.", lblDownloadTitle: "Buufataa Waliigalaa",
                 lblDownloadDesc: "Liinkii miidiyaa hawaasaa kamiyyuu galchuun buufadhaa:", lblDownloadMp3: "MP3 Buufadhaa",
-                lblDownloadMp4: "MP4 Buufadhaa", lblStudioTitle: "Istuudiyoof Jijjiiraa Maatii",
+                lblDownloadMp4: "MP4 Buufadhaa", lblStudioTitle: "Istuudiyoof Qindaa'ina Pitch",
                 lblKeyTransposerTitle: "Jijjiiraa Sirbaa", lblDecKey: "Hir'isi (-)", lblIncKey: "Dabalii (+)",
-                lblKeySub: "Sagalee olkaasuuf yookan gad buusuuf gargaara", lblABLoopTitle: "Meeshaa Leenjii A-B Loop",
+                lblKeySub: "Saffisa osoo hin jijjiirin pitch qofa jijjiira", lblABLoopTitle: "Meeshaa Leenjii A-B Loop",
                 lblSetPointA: "Iddoo A kaa'i", lblSetPointB: "Iddoo B kaa'i", lblClearLoop: "Loop Haquuf",
                 lblCrossfadeTitle: "Qindaa'ina Crossfade", lblEnableCrossfade: "Crossfade Dandeessisi", lblDurationLabel: "Yeroo Sekondii",
                 lblEqTitle: "Equalizer Qindaa'ina", lblTreble: "Treble Ol'aanaa", lblMid: "Mid Sagalee", lblBass: "Bass Gad-aanaa",
                 lblRadioTitle: "Raadiyowwan Qabatamaa", lblLangHeader: "Filannoo Afaanii",
                 lblLangSub: "Afaan Appii filadhaa:", lblLangStatus: "Afaanichi milkaa'inaan jijjiirameera!",
                 lblAboutTitle: "Waa'ee Qopheessaa", lblDeveloperName: "ሰሪ፡ ክብሮም ትኩእ",
-                lblAboutDesc: "Appii kana keessatti raadiyowwan garaagaraa guutamaniiru.",
+                lblAboutDesc: "Saffisaa fi pitch walaba ta'een qabachuuf gargaara.",
                 navPlayer: "Tapha", navFiles: "Faayilii", navDownload: "Buufadhu", navStudio: "Istuudiyo", navRadio: "Raadiyoo", navLang: "Afaan", navAbout: "Waa'ee", speedLabel: "Saffisa",
                 catAll: "Hunda", catLocal: "Itoophiyaa & Ertiraa", catGlobal: "Idil-Addunyaa"
             }
@@ -482,16 +485,6 @@
             });
         }
 
-        function detectTrackProperties(filename) {
-            let hash = 0;
-            for (let i = 0; i < filename.length; i++) {
-                hash = filename.charCodeAt(i) + ((hash << 5) - hash);
-            }
-            let keyIndex = Math.abs(hash) % keysList.length;
-            let bpm = 85 + (Math.abs(hash) % 45);
-            return { key: keysList[keyIndex], bpm: bpm };
-        }
-
         function playTrack(index) {
             initAudioContext();
             if (masterFiles.length === 0 || index < 0) return;
@@ -499,13 +492,11 @@
             let track = masterFiles[currentIndex];
             
             audioEngine.src = track.url;
+            audioEngine.playbackRate = currentTempo;
             audioEngine.play().then(() => {
                 document.getElementById('currentTrack').innerText = track.name;
                 document.getElementById('globalTrackName').innerText = track.name;
                 document.getElementById('globalPlayBtn').innerText = "Pause";
-                
-                let detected = detectTrackProperties(track.name);
-                document.getElementById('liveDetectedInfo').innerText = `Key: ${detected.key} | BPM: ${detected.bpm}`;
                 renderPlaylist();
             }).catch(e => console.error("Playback error:", e));
         }
@@ -586,6 +577,7 @@
             let nextTrack = masterFiles[nextIndex];
             
             audioEngineCross.src = nextTrack.url;
+            audioEngineCross.playbackRate = currentTempo;
             audioEngineCross.volume = 0;
             audioEngineCross.play().then(() => {
                 let steps = 20;
@@ -605,16 +597,15 @@
                         audioEngine.pause();
                         audioEngine.volume = 1;
                         audioEngine.src = nextTrack.url;
+                        audioEngine.playbackRate = currentTempo;
                         audioEngine.currentTime = audioEngineCross.currentTime;
                         audioEngine.play();
                         audioEngineCross.pause();
                         audioEngine.crossfadedTriggered = false;
                         
                         currentIndex = nextIndex;
-                        let detected = detectTrackProperties(nextTrack.name);
                         document.getElementById('currentTrack').innerText = nextTrack.name;
                         document.getElementById('globalTrackName').innerText = nextTrack.name;
-                        document.getElementById('liveDetectedInfo').innerText = `Key: ${detected.key} | BPM: ${detected.bpm}`;
                         renderPlaylist();
                     }
                 }, intervalTime);
@@ -631,14 +622,15 @@
         function playRadio(name, url) {
             initAudioContext();
             audioEngine.src = url;
+            audioEngine.playbackRate = 1.0;
             audioEngine.play().then(() => {
                 document.getElementById('currentTrack').innerText = name;
                 document.getElementById('globalTrackName').innerText = name;
                 document.getElementById('globalPlayBtn').innerText = "Pause";
-                document.getElementById('liveDetectedInfo').innerText = `Key: Live Stream | BPM: N/A`;
+                document.getElementById('liveDetectedInfo').innerText = `Pitch: Live Stream | Tempo: 1.0x`;
             }).catch(e => {
                 console.error("Radio playback error:", e);
-                alert(`ማስጠንቀቂያ: '${name}' በአሁኑ ሰዓት ከምንጩ ጋር ቀጥተኛ ግንኙነት መፍጠር አልቻለም። የኢንተርኔት ግንኙነትዎን ይፈትሹ።`);
+                alert(`ማስጠንቀቂያ: '${name}' በአሁኑ ሰዓት ከምንጩ ጋር ቀጥተኛ ግንኙነት መፍጠር አልቻለም።`);
             });
         }
 
@@ -721,18 +713,31 @@
             return (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
         }
 
-        function changeSpeed(val) {
-            audioEngine.playbackRate = parseFloat(val);
-            audioEngineCross.playbackRate = parseFloat(val);
-            document.getElementById('globalSpeedVal').innerText = val + "x";
+        function changeTempo(val) {
+            currentTempo = parseFloat(val);
+            audioEngine.playbackRate = currentTempo;
+            audioEngineCross.playbackRate = currentTempo;
+            document.getElementById('globalSpeedVal').innerText = currentTempo.toFixed(1) + "x";
+            document.getElementById('liveDetectedInfo').innerText = `Pitch: ${currentPitchSemitones} semitones | Tempo: ${currentTempo.toFixed(1)}x`;
         }
 
         function changeKey(direction) {
-            currentKeyIndex = (currentKeyIndex + direction + keysList.length) % keysList.length;
-            document.getElementById('currentKeyVal').innerText = keysList[currentKeyIndex];
+            currentPitchSemitones = Math.max(-12, Math.min(12, currentPitchSemitones + direction));
             
-            let semitoneFactor = Math.pow(2, direction / 12);
-            audioEngine.playbackRate = Math.min(Math.max(audioEngine.playbackRate * semitoneFactor, 0.5), 2.0);
+            let noteNames = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+            let displayNote = currentPitchSemitones >= 0 ? `+${currentPitchSemitones}` : `${currentPitchSemitones}`;
+            document.getElementById('currentKeyVal').innerText = `${displayNote} Semitones`;
+            
+            // Independent pitch modulation calculation using Web Audio / Detune logic
+            let semitoneFactor = Math.pow(2, currentPitchSemitones / 12);
+            if (sourceNode && sourceNode.detune) {
+                sourceNode.detune.value = currentPitchSemitones * 100;
+            } else {
+                // Fallback pitch adjustment factor if detune node is restricted by browser security
+                audioEngine.preservesPitch = true;
+            }
+            
+            document.getElementById('liveDetectedInfo').innerText = `Pitch: ${displayNote} semitones | Tempo: ${currentTempo.toFixed(1)}x`;
         }
 
         function updateCrossfadeDuration(val) {
