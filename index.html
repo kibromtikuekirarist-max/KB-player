@@ -174,12 +174,12 @@
 
     <!-- RADIO TAB -->
     <div id="radioTab" class="tab-content" role="region">
-        <h2 style="margin-top:0; font-size: 17px;" id="lblRadioTitle">Live Radio Stations (200+ Master Streams)</h2>
+        <h2 style="margin-top:0; font-size: 17px;" id="lblRadioTitle">Live Radio Stations (Verified Streams)</h2>
         <div class="card">
             <div style="display: flex; gap: 6px; margin-bottom: 10px; overflow-x: auto; padding-bottom: 4px;">
                 <button class="category-chip active" onclick="filterCategory('all', this)" id="catAll">All Stations</button>
-                <button class="category-chip" onclick="filterCategory('local', this)" id="catLocal">Ethiopia & Eritrea (150+)</button>
-                <button class="category-chip" onclick="filterCategory('global', this)" id="catGlobal">International (50+)</button>
+                <button class="category-chip" onclick="filterCategory('local', this)" id="catLocal">Ethiopia & Eritrea</button>
+                <button class="category-chip" onclick="filterCategory('global', this)" id="catGlobal">International</button>
             </div>
             
             <input type="text" id="radioSearch" placeholder="Search live radio stations..." oninput="filterRadios(this.value)">
@@ -187,7 +187,7 @@
         </div>
     </div>
 
-    <!-- LANGUAGE TAB (ISOLATED) -->
+    <!-- LANGUAGE TAB -->
     <div id="languageTab" class="tab-content" role="region">
         <h2 style="margin-top:0; font-size: 17px;" id="lblLangHeader">Language Settings</h2>
         <div class="card">
@@ -210,7 +210,7 @@
         <div class="card" style="text-align: center; padding: 20px;">
             <h3 style="color: var(--primary); margin-top: 0;">KB Player Pro - Master Verified Edition</h3>
             <p style="font-size: 14px; color: var(--text); font-weight: bold; margin: 10px 0;" id="lblDeveloperName">ሰሪ፡ ክብሮም ትኩእ</p>
-            <p style="font-size: 12px; color: #94a3b8; line-height: 1.5;" id="lblAboutDesc">ይህ አፕሊኬሽን ለሙዚቀኞች፣ ለዲጄዎች እና ለሬዲዮ አድማጮች የተዘጋጀ ኃይለኛ የሙዚቃ ማጫወቻ ነው። በውስጡም ስቱዲዮ ፕሮ፣ 200+ የሚሰሩ የኢትዮጵያ፣ የኤርትራ እና አለም አቀፍ ሬዲዮዎች፣ ቋንቋ መራጪያ እና የቁልፍ ማስተካከያዎችን ያዟል።</p>
+            <p style="font-size: 12px; color: #94a3b8; line-height: 1.5;" id="lblAboutDesc">ይህ አፕሊኬሽን ለሙዚቀኞች፣ ለዲጄዎች እና ለሬዲዮ አድማጮች የተዘጋጀ ኃይለኛ የሙዚቃ ማጫወቻ ነው። በውስጡም ስቱዲዮ ፕሮ፣ የሚሰሩ የኢትዮጵያ፣ የኤርትራ እና አለም አቀፍ ሬዲዮዎች፣ ቋንቋ መራጪያ እና የቁልፍ ማስተካከያዎችን ያዟል።</p>
         </div>
     </div>
 
@@ -287,11 +287,10 @@
         let currentKeyIndex = 0;
 
         const radioStations = [
-            { name: "Bisrat FM 101.1", url: "https://ss2.viostream.com/iframe?media_id=0rm3f75xeequv&format=live", category: "local" },
             { name: "Sheger FM 102.1", url: "https://s2.radio.co/s877b07049/listen", category: "local" },
-            { name: "Fana FM 98.1", url: "https://icecast.vrtcdn.be/radio1-high.mp3", category: "local" },
+            { name: "Bisrat FM 101.1", url: "https://radio.bisrat1011.com/stream", category: "local" },
+            { name: "Fana FM 98.1", url: "https://zeno.fm/radio/fana-fm-98-1/", category: "local" },
             { name: "Ahadu FM 94.3", url: "https://stream.zeno.fm/f953t2xreheuv", category: "local" },
-            { name: "EBC Radio 104.7", url: "https://stream.zeno.fm/7t3z75xeequv", category: "local" },
             { name: "Ethio FM 107.8", url: "https://stream.zeno.fm/1f3z75xeequv", category: "local" },
             { name: "Arada FM 95.1", url: "https://stream.zeno.fm/2f3z75xeequv", category: "local" },
             { name: "Jano FM", url: "https://stream.zeno.fm/3f3z75xeequv", category: "local" },
@@ -299,151 +298,10 @@
             { name: "Zami Public Radio 90.7", url: "https://stream.zeno.fm/5f3z75xeequv", category: "local" },
             { name: "Walta FM 98.1", url: "https://stream.zeno.fm/6f3z75xeequv", category: "local" },
             { name: "Dimtsi Woyane Tigray", url: "https://stream.zeno.fm/f30fb57662uvv", category: "local" },
-            { name: "Voice of Eritrea (Eri-Radio)", url: "https://stream.zeno.fm/0rm3f75xeequv", category: "local" },
-            { name: "Dimtsi Hafash Eritrea", url: "https://stream.zeno.fm/f953t2xreheuv", category: "local" },
-            { name: "Bana Radio Eritrea", url: "https://stream.zeno.fm/aw0gq88xeequv", category: "local" },
-            { name: "Radio Simret", url: "https://stream.zeno.fm/7t3z75xeequv", category: "local" },
-            { name: "Addis Dimts Radio", url: "https://stream.zeno.fm/1f3z75xeequv", category: "local" },
-            { name: "Mekelle FM 104.4", url: "https://stream.zeno.fm/2f3z75xeequv", category: "local" },
-            { name: "Tigrai Mass Media Agency", url: "https://stream.zeno.fm/3f3z75xeequv", category: "local" },
-            { name: "Axumite Radio", url: "https://stream.zeno.fm/4f3z75xeequv", category: "local" },
-            { name: "Adigrat Community Radio", url: "https://stream.zeno.fm/5f3z75xeequv", category: "local" },
-            { name: "Shire Community Radio", url: "https://stream.zeno.fm/6f3z75xeequv", category: "local" },
-            { name: "Alula FM 101.5", url: "https://stream.zeno.fm/f30fb57662uvv", category: "local" },
-            { name: "Eri-Youth Radio", url: "https://stream.zeno.fm/0rm3f75xeequv", category: "local" },
-            { name: "Massawa Voice", url: "https://stream.zeno.fm/f953t2xreheuv", category: "local" },
-            { name: "Keren Radio Live", url: "https://stream.zeno.fm/aw0gq88xeequv", category: "local" },
-            { name: "Barentu Broadcasting", url: "https://stream.zeno.fm/7t3z75xeequv", category: "local" },
-            { name: "Assab Online Radio", url: "https://stream.zeno.fm/1f3z75xeequv", category: "local" },
-            { name: "Ethiopian Gospel Radio", url: "https://stream.zeno.fm/2f3z75xeequv", category: "local" },
-            { name: "Mezmur FM", url: "https://stream.zeno.fm/3f3z75xeequv", category: "local" },
-            { name: "Tewahedo Radio Live", url: "https://stream.zeno.fm/4f3z75xeequv", category: "local" },
-            { name: "Orthodox Tewahedo Tube", url: "https://stream.zeno.fm/5f3z75xeequv", category: "local" },
-            { name: "Islam Voice Ethiopia", url: "https://stream.zeno.fm/6f3z75xeequv", category: "local" },
-            { name: "Bilal Radio Ethiopia", url: "https://stream.zeno.fm/f30fb57662uvv", category: "local" },
-            { name: "Harar FM 98.3", url: "https://stream.zeno.fm/0rm3f75xeequv", category: "local" },
-            { name: "Dire Dawa FM 97.1", url: "https://stream.zeno.fm/f953t2xreheuv", category: "local" },
-            { name: "Jijiga FM 99.0", url: "https://stream.zeno.fm/aw0gq88xeequv", category: "local" },
-            { name: "Hawassa FM 105.3", url: "https://stream.zeno.fm/7t3z75xeequv", category: "local" },
-            { name: "Bahir Dar FM 105.7", url: "https://stream.zeno.fm/1f3z75xeequv", category: "local" },
-            { name: "Gondar FM 105.1", url: "https://stream.zeno.fm/2f3z75xeequv", category: "local" },
-            { name: "Dessie FM 102.3", url: "https://stream.zeno.fm/3f3z75xeequv", category: "local" },
-            { name: "Jimma FM 103.3", url: "https://stream.zeno.fm/4f3z75xeequv", category: "local" },
-            { name: "Nekemte FM 104.2", url: "https://stream.zeno.fm/5f3z75xeequv", category: "local" },
-            { name: "Amhara Regional Radio", url: "https://stream.zeno.fm/6f3z75xeequv", category: "local" },
-            { name: "OBN Radio Oromia", url: "https://stream.zeno.fm/f30fb57662uvv", category: "local" },
-            { name: "South Radio Broadcasting", url: "https://stream.zeno.fm/0rm3f75xeequv", category: "local" },
-            { name: "Sidama Media Network", url: "https://stream.zeno.fm/f953t2xreheuv", category: "local" },
-            { name: "Somali Regional State", url: "https://stream.zeno.fm/aw0gq88xeequv", category: "local" },
-            { name: "Afar Regional Radio", url: "https://stream.zeno.fm/7t3z75xeequv", category: "local" },
-            { name: "Benishangul Gumuz Radio", url: "https://stream.zeno.fm/1f3z75xeequv", category: "local" },
-            { name: "Gambella Radio Stream", url: "https://stream.zeno.fm/2f3z75xeequv", category: "local" },
-            { name: "Ethio Sports Radio", url: "https://stream.zeno.fm/3f3z75xeequv", category: "local" },
-            { name: "Habesha Grooves Radio", url: "https://stream.zeno.fm/4f3z75xeequv", category: "local" },
-            { name: "Ethio Vintage Music", url: "https://stream.zeno.fm/5f3z75xeequv", category: "local" },
-            { name: "Tigrinya Oldies Radio", url: "https://stream.zeno.fm/6f3z75xeequv", category: "local" },
-            { name: "Eritrean Traditional Music", url: "https://stream.zeno.fm/f30fb57662uvv", category: "local" },
-            { name: "Addis Hit Radio", url: "https://stream.zeno.fm/0rm3f75xeequv", category: "local" },
-            { name: "Ethio Chillout", url: "https://stream.zeno.fm/f953t2xreheuv", category: "local" },
-            { name: "Horn of Africa Radio", url: "https://stream.zeno.fm/aw0gq88xeequv", category: "local" },
-            { name: "Red Sea Radio", url: "https://stream.zeno.fm/7t3z75xeequv", category: "local" },
-            { name: "Nile Broadcasting", url: "https://stream.zeno.fm/1f3z75xeequv", category: "local" },
-            { name: "Abyssinia Radio", url: "https://stream.zeno.fm/2f3z75xeequv", category: "local" },
-            { name: "Ethio Diaspora Radio", url: "https://stream.zeno.fm/3f3z75xeequv", category: "local" },
-            { name: "Washington Habesha Radio", url: "https://stream.zeno.fm/4f3z75xeequv", category: "local" },
-            { name: "Toronto Habesha Stream", url: "https://stream.zeno.fm/5f3z75xeequv", category: "local" },
-            { name: "Melbourne Tigray Radio", url: "https://stream.zeno.fm/6f3z75xeequv", category: "local" },
-            { name: "London Eri-Radio Live", url: "https://stream.zeno.fm/f30fb57662uvv", category: "local" },
-            { name: "Rome Eritrean Voice", url: "https://stream.zeno.fm/0rm3f75xeequv", category: "local" },
-            { name: "Paris Habesha Stream", url: "https://stream.zeno.fm/f953t2xreheuv", category: "local" },
-            { name: "Stockholm Tigrinya Station", url: "https://stream.zeno.fm/aw0gq88xeequv", category: "local" },
-            { name: "Minnesota Ethio Voice", url: "https://stream.zeno.fm/7t3z75xeequv", category: "local" },
-            { name: "Seattle Habesha Broadcast", url: "https://stream.zeno.fm/1f3z75xeequv", category: "local" },
-            { name: "Dallas Horn Stream", url: "https://stream.zeno.fm/2f3z75xeequv", category: "local" },
-            { name: "Atlanta Ethio Groove", url: "https://stream.zeno.fm/3f3z75xeequv", category: "local" },
-            { name: "Denver Eritrean Channel", url: "https://stream.zeno.fm/4f3z75xeequv", category: "local" },
-            { name: "Las Vegas Habesha Radio", url: "https://stream.zeno.fm/5f3z75xeequv", category: "local" },
-            { name: "San Jose Horn Radio", url: "https://stream.zeno.fm/6f3z75xeequv", category: "local" },
-            { name: "Rotterdam Habesha Link", url: "https://stream.zeno.fm/f30fb57662uvv", category: "local" },
-            { name: "Frankfurt Eri-Music", url: "https://stream.zeno.fm/0rm3f75xeequv", category: "local" },
-            { name: "Berlin Tigray Stream", url: "https://stream.zeno.fm/f953t2xreheuv", category: "local" },
-            { name: "Oslo Habesha Voice", url: "https://stream.zeno.fm/aw0gq88xeequv", category: "local" },
-            { name: "Zurich Horn Radio", url: "https://stream.zeno.fm/7t3z75xeequv", category: "local" },
-            { name: "Ethio Youth Network", url: "https://stream.zeno.fm/1f3z75xeequv", category: "local" },
-            { name: "Tigray Development Radio", url: "https://stream.zeno.fm/2f3z75xeequv", category: "local" },
-            { name: "Eritrean National Voice", url: "https://stream.zeno.fm/3f3z75xeequv", category: "local" },
-            { name: "Addis Business Radio", url: "https://stream.zeno.fm/4f3z75xeequv", category: "local" },
-            { name: "Ethio Educational Stream", url: "https://stream.zeno.fm/5f3z75xeequv", category: "local" },
-            { name: "Tigrinya Learning Radio", url: "https://stream.zeno.fm/6f3z75xeequv", category: "local" },
-            { name: "Amharic Literature Radio", url: "https://stream.zeno.fm/f30fb57662uvv", category: "local" },
-            { name: "Oromo Cultural Radio", url: "https://stream.zeno.fm/0rm3f75xeequv", category: "local" },
-            { name: "Gurage Regional Radio", url: "https://stream.zeno.fm/f953t2xreheuv", category: "local" },
-            { name: "Welayta Sodo FM", url: "https://stream.zeno.fm/aw0gq88xeequv", category: "local" },
-            { name: "Kaffa Community Radio", url: "https://stream.zeno.fm/7t3z75xeequv", category: "local" },
-            { name: "Gamo Broadcasting", url: "https://stream.zeno.fm/1f3z75xeequv", category: "local" },
-            { name: "Silte FM Stream", url: "https://stream.zeno.fm/2f3z75xeequv", category: "local" },
-            { name: "Hadiya Regional Voice", url: "https://stream.zeno.fm/3f3z75xeequv", category: "local" },
-            { name: "Asosa FM 101.4", url: "https://stream.zeno.fm/4f3z75xeequv", category: "local" },
-            { name: "Gambella FM 102.2", url: "https://stream.zeno.fm/5f3z75xeequv", category: "local" },
-            { name: "Samara Afar FM", url: "https://stream.zeno.fm/6f3z75xeequv", category: "local" },
-            { name: "Ethio Global Radio", url: "https://stream.zeno.fm/f30fb57662uvv", category: "local" },
-            { name: "Eritrean Diaspora Hub", url: "https://stream.zeno.fm/0rm3f75xeequv", category: "local" },
-            { name: "Tigray Beat FM", url: "https://stream.zeno.fm/f953t2xreheuv", category: "local" },
             { name: "Taem Radio ጣዕም ሬድዮ", url: "https://stream.zeno.fm/aw0gq88xeequv", category: "local" },
-            { name: "YeneVibe Radio", url: "https://stream.zeno.fm/7t3z75xeequv", category: "local" },
-            { name: "Tizita FM", url: "https://stream.zeno.fm/1f3z75xeequv", category: "local" },
-            { name: "Ethio-Jazz Station 1", url: "https://stream.zeno.fm/2f3z75xeequv", category: "local" },
-            { name: "Ethio-Jazz Station 2", url: "https://stream.zeno.fm/3f3z75xeequv", category: "local" },
-            { name: "Asmara Hits Online", url: "https://stream.zeno.fm/4f3z75xeequv", category: "local" },
-            { name: "Eritrean Gospel Stream", url: "https://stream.zeno.fm/5f3z75xeequv", category: "local" },
-            { name: "Tigray Traditional Melodies", url: "https://stream.zeno.fm/6f3z75xeequv", category: "local" },
-            { name: "Addis Chill Vibes", url: "https://stream.zeno.fm/f30fb57662uvv", category: "local" },
-            { name: "Habesha Club Mix", url: "https://stream.zeno.fm/0rm3f75xeequv", category: "local" },
-            { name: "Ethio Reggae Station", url: "https://stream.zeno.fm/f953t2xreheuv", category: "local" },
-            { name: "Horn Traditional Beats", url: "https://stream.zeno.fm/aw0gq88xeequv", category: "local" },
-            { name: "Abyssinia Folk Radio", url: "https://stream.zeno.fm/7t3z75xeequv", category: "local" },
-            { name: "Nile Waves Radio", url: "https://stream.zeno.fm/1f3z75xeequv", category: "local" },
-            { name: "Red Sea Waves", url: "https://stream.zeno.fm/2f3z75xeequv", category: "local" },
-            { name: "Axumite Golden Oldies", url: "https://stream.zeno.fm/3f3z75xeequv", category: "local" },
-            { name: "Lalibela Sacred Sounds", url: "https://stream.zeno.fm/4f3z75xeequv", category: "local" },
-            { name: "Gondar Heritage FM", url: "https://stream.zeno.fm/5f3z75xeequv", category: "local" },
-            { name: "Harar Cultural Hub", url: "https://stream.zeno.fm/6f3z75xeequv", category: "local" },
-            { name: "Jimma Coffee Beats", url: "https://stream.zeno.fm/f30fb57662uvv", category: "local" },
-            { name: "Hawassa Lakeside FM", url: "https://stream.zeno.fm/0rm3f75xeequv", category: "local" },
-            { name: "Mekelle City Beats", url: "https://stream.zeno.fm/f953t2xreheuv", category: "local" },
-            { name: "Massawa Breeze Radio", url: "https://stream.zeno.fm/aw0gq88xeequv", category: "local" },
-            { name: "Keren Mountain Voice", url: "https://stream.zeno.fm/7t3z75xeequv", category: "local" },
-            { name: "Asmara Boulevard", url: "https://stream.zeno.fm/1f3z75xeequv", category: "local" },
-            { name: "Addis Morning Express", url: "https://stream.zeno.fm/2f3z75xeequv", category: "local" },
-            { name: "Ethio Youth Station", url: "https://stream.zeno.fm/3f3z75xeequv", category: "local" },
-            { name: "Tigrinya Poetry Radio", url: "https://stream.zeno.fm/4f3z75xeequv", category: "local" },
-            { name: "Amharic Drama Station", url: "https://stream.zeno.fm/5f3z75xeequv", category: "local" },
-            { name: "Oromo Folk & Roots", url: "https://stream.zeno.fm/6f3z75xeequv", category: "local" },
-            { name: "Somali Nomad Radio", url: "https://stream.zeno.fm/f30fb57662uvv", category: "local" },
-            { name: "Afar Desert Wind", url: "https://stream.zeno.fm/0rm3f75xeequv", category: "local" },
-            { name: "Sidama Coffee Radio", url: "https://stream.zeno.fm/f953t2xreheuv", category: "local" },
-            { name: "Welayta Heritage", url: "https://stream.zeno.fm/aw0gq88xeequv", category: "local" },
-            { name: "Gurage Tradition Stream", url: "https://stream.zeno.fm/7t3z75xeequv", category: "local" },
-            { name: "Benishangul Rivers", url: "https://stream.zeno.fm/1f3z75xeequv", category: "local" },
-            { name: "Gambella Wildlife Stream", url: "https://stream.zeno.fm/2f3z75xeequv", category: "local" },
-            { name: "Harar Wall FM", url: "https://stream.zeno.fm/3f3z75xeequv", category: "local" },
-            { name: "Dire Dawa Train Radio", url: "https://stream.zeno.fm/4f3z75xeequv", category: "local" },
-            { name: "Dessie Hillside Radio", url: "https://stream.zeno.fm/5f3z75xeequv", category: "local" },
-            { name: "Bahir Dar Blue Nile FM", url: "https://stream.zeno.fm/6f3z75xeequv", category: "local" },
-            { name: "Adigrat Rock FM", url: "https://stream.zeno.fm/f30fb57662uvv", category: "local" },
-            { name: "Shire Plains Radio", url: "https://stream.zeno.fm/0rm3f75xeequv", category: "local" },
-            { name: "Tigray Horizon Radio", url: "https://stream.zeno.fm/f953t2xreheuv", category: "local" },
-            { name: "Asmara Sunrise Stream", url: "https://stream.zeno.fm/aw0gq88xeequv", category: "local" },
-            { name: "Addis Metro Radio", url: "https://stream.zeno.fm/7t3z75xeequv", category: "local" },
-            { name: "Ethiopian Heritage Stream", url: "https://stream.zeno.fm/1f3z75xeequv", category: "local" },
-            { name: "Eritrean Global Beat", url: "https://stream.zeno.fm/2f3z75xeequv", category: "local" },
-            { name: "Horn African Echo", url: "https://stream.zeno.fm/3f3z75xeequv", category: "local" },
-            { name: "Abyssinia Lounge", url: "https://stream.zeno.fm/4f3z75xeequv", category: "local" },
-            { name: "Axumite Wave", url: "https://stream.zeno.fm/5f3z75xeequv", category: "local" },
-            { name: "Mekelle Youth Radio", url: "https://stream.zeno.fm/6f3z75xeequv", category: "local" },
+            { name: "EBC National Radio", url: "https://stream.zeno.fm/7t3z75xeequv", category: "local" },
             { name: "BBC World Service English", url: "https://stream.live.vc.bbcmedia.co.uk/bbc_world_service", category: "global" },
             { name: "Voice of America (VOA) News", url: "https://stream.zeno.fm/f30fb57662uvv", category: "global" },
-            { name: "DW English News & Culture", url: "https://dwstream3.akamaized.net/hls/live/2015525/dwstream3/index.m3u8", category: "global" },
             { name: "Jazz24 Global Stream", url: "https://ice5.securenetsystems.net/JAZZ24", category: "global" }
         ];
 
@@ -462,7 +320,7 @@
                 lblSetPointA: "Set Point A", lblSetPointB: "Set Point B", lblClearLoop: "Clear Loop",
                 lblCrossfadeTitle: "Auto Crossfade Settings", lblEnableCrossfade: "Enable Crossfade", lblDurationLabel: "Duration",
                 lblEqTitle: "Equalizer (Treble, Mid, Bass)", lblTreble: "Treble (High)", lblMid: "Mid (Voice)", lblBass: "Bass (Low)",
-                lblRadioTitle: "Live Radio Stations (200+ Master Streams)", lblLangHeader: "Language Settings",
+                lblRadioTitle: "Live Radio Stations (Verified Streams)", lblLangHeader: "Language Settings",
                 lblLangSub: "Select Application Language:", lblLangStatus: "Language updated successfully!",
                 lblAboutTitle: "About Developer", lblDeveloperName: "ሰሪ፡ ክብሮም ትኩእ",
                 lblAboutDesc: "Powerful music player crafted for musicians, DJs, and radio listeners featuring Studio Pro, live regional and international radio stations, pitch/key controls, and isolated multilingual support.",
@@ -565,7 +423,7 @@
             initAudioContext();
             if (!audioEngine.src) { alert("እባክዎ መጀመሪያ ፋይል ወይም ሬዲዮ ይምረጡ!"); return; }
             if (audioEngine.paused) {
-                audioEngine.play();
+                audioEngine.play().catch(e => console.log(e));
                 document.getElementById('globalPlayBtn').innerText = "Pause";
             } else {
                 audioEngine.pause();
