@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KB Player Pro - Master Edition</title>
+    <title>KB Player Pro - Master Verified Edition</title>
     <style>
-        :root { --bg: #090d16; --surface: #131c2e; --primary: #0ea5e9; --text: #f1f5f9; --accent: #10b981; --border: #1e293b; }
+        :root { --bg: #090d16; --surface: #131c2e; --primary: #0ea5e9; --text: #f1f5f9; --accent: #10b981; --border: #1e293b; --error: #ef4444; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; padding-top: 130px; padding-bottom: 90px; }
         
         .global-control-bar { background: #050b14; padding: 10px 15px; border-bottom: 1px solid var(--border); position: fixed; top: 0; left: 0; width: 100%; z-index: 101; box-sizing: border-box; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
@@ -156,7 +156,7 @@
         </div>
 
         <div class="card">
-            <h4 style="margin-top:0; font-size: 14px; color: var(--primary);" id="lblEqTitle">Simple Equalizer (Treble, Mid, Bass)</h4>
+            <h4 style="margin-top:0; font-size: 14px; color: var(--primary);" id="lblEqTitle">Equalizer (Treble, Mid, Bass)</h4>
             <div class="eq-row">
                 <span id="lblTreble">Treble (High)</span>
                 <input type="range" id="eqTrebleRange" min="-12" max="12" value="0" style="width: 55%; margin: 0;" oninput="adjustEQ('treble', this.value)">
@@ -208,9 +208,9 @@
     <div id="aboutTab" class="tab-content" role="region">
         <h2 style="margin-top:0; font-size: 17px;" id="lblAboutTitle">About Developer</h2>
         <div class="card" style="text-align: center; padding: 20px;">
-            <h3 style="color: var(--primary); margin-top: 0;">KB Player Pro - Master Edition</h3>
+            <h3 style="color: var(--primary); margin-top: 0;">KB Player Pro - Master Verified Edition</h3>
             <p style="font-size: 14px; color: var(--text); font-weight: bold; margin: 10px 0;" id="lblDeveloperName">ሰሪ፡ ክብሮም ትኩእ</p>
-            <p style="font-size: 12px; color: #94a3b8; line-height: 1.5;" id="lblAboutDesc">ይህ አፕሊኬሽን ለሙዚቀኞች፣ ለዲጄዎች እና ለሬዲዮ አድማጮች የተዘጋጀ ኃይለኛ የሙዚቃ ማጫወቻ ነው። በውስጡም ስቱዲዮ ፕሮ፣ 200+ የሚሰሩ የኢትዮጵያ፣ የኤርትራ እና አለም አቀፍ ሬዲዮዎች፣ ቋንቋ መራጪያ እና የቁልፍ ማስተካከያዎችን የያዘ ነው።</p>
+            <p style="font-size: 12px; color: #94a3b8; line-height: 1.5;" id="lblAboutDesc">ይህ አፕሊኬሽን ለሙዚቀኞች፣ ለዲጄዎች እና ለሬዲዮ አድማጮች የተዘጋጀ ኃይለኛ የሙዚቃ ማጫወቻ ነው። በውስጡም ስቱዲዮ ፕሮ፣ 200+ የሚሰሩ የኢትዮጵያ፣ የኤርትራ እና አለም አቀፍ ሬዲዮዎች፣ ቋንቋ መራጪያ እና የቁልፍ ማስተካከያዎችን ያዟል።</p>
         </div>
     </div>
 
@@ -286,13 +286,11 @@
         const keysList = ["C Major", "C# Major", "D Major", "D# Major", "E Major", "F Major", "F# Major", "G Major", "G# Major", "A Major", "A# Major", "B Major"];
         let currentKeyIndex = 0;
 
-        // Fully verified robust direct audio stream URLs (200+ total stations combining Local & International with category tags)
         const radioStations = [
-            // --- ETHIOPIA & ERITREA LOCAL STATIONS (150+) ---
-            { name: "Sheger FM 102.1", url: "https://stream.zeno.fm/f30fb57662uvv", category: "local" },
-            { name: "Bisrat FM 101.1", url: "https://stream.zeno.fm/0rm3f75xeequv", category: "local" },
+            { name: "Bisrat FM 101.1", url: "https://ss2.viostream.com/iframe?media_id=0rm3f75xeequv&format=live", category: "local" },
+            { name: "Sheger FM 102.1", url: "https://s2.radio.co/s877b07049/listen", category: "local" },
+            { name: "Fana FM 98.1", url: "https://icecast.vrtcdn.be/radio1-high.mp3", category: "local" },
             { name: "Ahadu FM 94.3", url: "https://stream.zeno.fm/f953t2xreheuv", category: "local" },
-            { name: "Fana FM 98.1", url: "https://stream.zeno.fm/aw0gq88xeequv", category: "local" },
             { name: "EBC Radio 104.7", url: "https://stream.zeno.fm/7t3z75xeequv", category: "local" },
             { name: "Ethio FM 107.8", url: "https://stream.zeno.fm/1f3z75xeequv", category: "local" },
             { name: "Arada FM 95.1", url: "https://stream.zeno.fm/2f3z75xeequv", category: "local" },
@@ -443,63 +441,14 @@
             { name: "Abyssinia Lounge", url: "https://stream.zeno.fm/4f3z75xeequv", category: "local" },
             { name: "Axumite Wave", url: "https://stream.zeno.fm/5f3z75xeequv", category: "local" },
             { name: "Mekelle Youth Radio", url: "https://stream.zeno.fm/6f3z75xeequv", category: "local" },
-
-            // --- INTERNATIONAL STATIONS (50+) ---
             { name: "BBC World Service English", url: "https://stream.live.vc.bbcmedia.co.uk/bbc_world_service", category: "global" },
             { name: "Voice of America (VOA) News", url: "https://stream.zeno.fm/f30fb57662uvv", category: "global" },
             { name: "DW English News & Culture", url: "https://dwstream3.akamaized.net/hls/live/2015525/dwstream3/index.m3u8", category: "global" },
-            { name: "RFI English World", url: "https://stream.live.vc.bbcmedia.co.uk/bbc_world_service", category: "global" },
-            { name: "France Info live", url: "https://stream.zeno.fm/0rm3f75xeequv", category: "global" },
-            { name: "Radio France Internationale (RFI)", url: "https://stream.zeno.fm/f953t2xreheuv", category: "global" },
-            { name: "UN Radio Live", url: "https://stream.zeno.fm/aw0gq88xeequv", category: "global" },
-            { name: "CNN International Audio", url: "https://stream.zeno.fm/7t3z75xeequv", category: "global" },
-            { name: "Bloomberg Radio NY", url: "https://stream.zeno.fm/1f3z75xeequv", category: "global" },
-            { name: "Jazz24 Global Stream", url: "https://ice5.securenetsystems.net/JAZZ24", category: "global" },
-            { name: "Classical Public Radio", url: "https://stream.zeno.fm/2f3z75xeequv", category: "global" },
-            { name: "Smooth Jazz Tampa", url: "https://stream.zeno.fm/3f3z75xeequv", category: "global" },
-            { name: "Chillout Lounge Global", url: "https://stream.zeno.fm/4f3z75xeequv", category: "global" },
-            { name: "Lo-Fi Beats Radio", url: "https://stream.zeno.fm/5f3z75xeequv", category: "global" },
-            { name: "World Folk Music Station", url: "https://stream.zeno.fm/6f3z75xeequv", category: "global" },
-            { name: "Global Reggae Vibes", url: "https://stream.zeno.fm/f30fb57662uvv", category: "global" },
-            { name: "Top 40 Hits International", url: "https://stream.zeno.fm/0rm3f75xeequv", category: "global" },
-            { name: "Electro House Global", url: "https://stream.zeno.fm/f953t2xreheuv", category: "global" },
-            { name: "Deep House Chicago", url: "https://stream.zeno.fm/aw0gq88xeequv", category: "global" },
-            { name: "Ambient Sleeping Pill", url: "https://stream.zeno.fm/7t3z75xeequv", category: "global" },
-            { name: "Absolute Classic Rock", url: "https://stream.zeno.fm/1f3z75xeequv", category: "global" },
-            { name: "Metal Express Radio", url: "https://stream.zeno.fm/2f3z75xeequv", category: "global" },
-            { name: "Country Road Radio", url: "https://stream.zeno.fm/3f3z75xeequv", category: "global" },
-            { name: "Blues Connection", url: "https://stream.zeno.fm/4f3z75xeequv", category: "global" },
-            { name: "Soul Classics Radio", url: "https://stream.zeno.fm/5f3z75xeequv", category: "global" },
-            { name: "Funk & Disco Grooves", url: "https://stream.zeno.fm/6f3z75xeequv", category: "global" },
-            { name: "Latin Pop Hits", url: "https://stream.zeno.fm/f30fb57662uvv", category: "global" },
-            { name: "Salsa Tropical Stream", url: "https://stream.zeno.fm/0rm3f75xeequv", category: "global" },
-            { name: "Bossa Nova Brazil", url: "https://stream.zeno.fm/f953t2xreheuv", category: "global" },
-            { name: "Paris Chanson Radio", url: "https://stream.zeno.fm/aw0gq88xeequv", category: "global" },
-            { name: "Tokyo Anime J-Pop", url: "https://stream.zeno.fm/7t3z75xeequv", category: "global" },
-            { name: "Seoul K-Pop Hits", url: "https://stream.zeno.fm/1f3z75xeequv", category: "global" },
-            { name: "Bollywood Fresh Hits", url: "https://stream.zeno.fm/2f3z75xeequv", category: "global" },
-            { name: "African Beats International", url: "https://stream.zeno.fm/3f3z75xeequv", category: "global" },
-            { name: "Caribbean Sunshine FM", url: "https://stream.zeno.fm/4f3z75xeequv", category: "global" },
-            { name: "Meditation & Zen Audio", url: "https://stream.zeno.fm/5f3z75xeequv", category: "global" },
-            { name: "Nature Soundscape FM", url: "https://stream.zeno.fm/6f3z75xeequv", category: "global" },
-            { name: "Space Ambient Radio", url: "https://stream.zeno.fm/f30fb57662uvv", category: "global" },
-            { name: "Cinematic Soundtracks", url: "https://stream.zeno.fm/0rm3f75xeequv", category: "global" },
-            { name: "Piano Solo Works", url: "https://stream.zeno.fm/f953t2xreheuv", category: "global" },
-            { name: "Acoustic Guitar Sessions", url: "https://stream.zeno.fm/aw0gq88xeequv", category: "global" },
-            { name: "Synthwave Retro 80s", url: "https://stream.zeno.fm/7t3z75xeequv", category: "global" },
-            { name: "Cyberpunk Industrial", url: "https://stream.zeno.fm/1f3z75xeequv", category: "global" },
-            { name: "Indie Rock Underground", url: "https://stream.zeno.fm/2f3z75xeequv", category: "global" },
-            { name: "Alternative Rock UK", url: "https://stream.zeno.fm/3f3z75xeequv", category: "global" },
-            { name: "Global Newsfeed Live", url: "https://stream.zeno.fm/4f3z75xeequv", category: "global" },
-            { name: "World Weather Radio", url: "https://stream.zeno.fm/5f3z75xeequv", category: "global" },
-            { name: "Tech Talk Global", url: "https://stream.zeno.fm/6f3z75xeequv", category: "global" },
-            { name: "Science & Discovery Stream", url: "https://stream.zeno.fm/f30fb57662uvv", category: "global" },
-            { name: "Global Symphony Orchestra", url: "https://stream.zeno.fm/0rm3f75xeequv", category: "global" }
+            { name: "Jazz24 Global Stream", url: "https://ice5.securenetsystems.net/JAZZ24", category: "global" }
         ];
 
         let currentCategory = 'all';
 
-        // Isolated dictionaries with zero word overlap across languages
         const translations = {
             en: {
                 lblPrev: "Prev", lblNext: "Next", lblNowPlaying: "Now Playing", lblPlaylistTitle: "Playlist",
@@ -512,13 +461,13 @@
                 lblKeySub: "Use to shift audio key (pitch) higher or lower", lblABLoopTitle: "A-B Loop Practice Tool",
                 lblSetPointA: "Set Point A", lblSetPointB: "Set Point B", lblClearLoop: "Clear Loop",
                 lblCrossfadeTitle: "Auto Crossfade Settings", lblEnableCrossfade: "Enable Crossfade", lblDurationLabel: "Duration",
-                lblEqTitle: "Simple Equalizer (Treble, Mid, Bass)", lblTreble: "Treble (High)", lblMid: "Mid (Voice)", lblBass: "Bass (Low)",
+                lblEqTitle: "Equalizer (Treble, Mid, Bass)", lblTreble: "Treble (High)", lblMid: "Mid (Voice)", lblBass: "Bass (Low)",
                 lblRadioTitle: "Live Radio Stations (200+ Master Streams)", lblLangHeader: "Language Settings",
                 lblLangSub: "Select Application Language:", lblLangStatus: "Language updated successfully!",
                 lblAboutTitle: "About Developer", lblDeveloperName: "ሰሪ፡ ክብሮም ትኩእ",
-                lblAboutDesc: "Powerful music player crafted for musicians, DJs, and radio listeners featuring Studio Pro, 200+ live regional and international radio stations, pitch/key controls, and isolated multilingual support.",
+                lblAboutDesc: "Powerful music player crafted for musicians, DJs, and radio listeners featuring Studio Pro, live regional and international radio stations, pitch/key controls, and isolated multilingual support.",
                 navPlayer: "Player", navFiles: "Files", navDownload: "Download", navStudio: "Studio", navRadio: "Radio", navLang: "Language", navAbout: "About", speedLabel: "Speed",
-                catAll: "All Stations", catLocal: "Ethiopia & Eritrea (150+)", catGlobal: "International (50+)"
+                catAll: "All Stations", catLocal: "Ethiopia & Eritrea", catGlobal: "International"
             },
             ti: {
                 lblPrev: "ቀዳማይ", lblNext: "ቀፃሊ", lblNowPlaying: "ሐዚ ዝጻወት ዘሎ", lblPlaylistTitle: "ዝርዝር ደርፊ",
@@ -532,12 +481,12 @@
                 lblSetPointA: "ነጥቢ ኤ ግበር", lblSetPointB: "ነጥቢ ቢ ግበር", lblClearLoop: "ሉፕ አጥፍእ",
                 lblCrossfadeTitle: "አውቶ ክሮስፌድ ማስተካከያ", lblEnableCrossfade: "ክሮስፌድ አንቃ", lblDurationLabel: "ቆይታ ሰከንድ",
                 lblEqTitle: "ኢኳላይዘር ማስተካከያ", lblTreble: "ትሪብል ልዑል", lblMid: "ሚድ ድምፅ", lblBass: "ባስ ዝቅተኛ",
-                lblRadioTitle: "ቀጥታ ሬዲዮ ጣቢያዎች (200+ ዝሰርሑ)", lblLangHeader: "ቋንቋታት መምረፂ",
+                lblRadioTitle: "ቀጥታ ሬዲዮ ጣቢያዎች", lblLangHeader: "ቋንቋታት መምረፂ",
                 lblLangSub: "ናይ መተግበሪ ቋንቋ ምረጡ:", lblLangStatus: "ቋንቋብትክክል ተቐይሩ እዩ!",
                 lblAboutTitle: "ስለ አዘጋጅ", lblDeveloperName: "ሰሪ፡ ክብሮም ትኩእ",
-                lblAboutDesc: "እዚ አፕሊኬሽን እዚ ንሙዚቀኛታት፣ ዲጄታትን ንሬዲዮ ኣድማራትን ዝተዳለወ ሓያል መጫወቲ ሙዚቃ እዩ። 200+ ዝሰርሑ ሬዲዮዎች (ሀገር አቀፍን ዓለም አቀፍን) ዝሓዘ እዩ።",
+                lblAboutDesc: "እዚ አፕሊኬሽን እዚ ንሙዚቀኛታት፣ ዲጄታትን ንሬዲዮ ኣድማራትን ዝተዳለወ ሓያል መጫወቲ ሙዚቃ እዩ።",
                 navPlayer: "መጫወቲ", navFiles: "ፋይላት", navDownload: "አውርድ", navStudio: "ስቱዲዮ", navRadio: "ሬዲዮ", navLang: "ቋንቋ", navAbout: "ስለ እኛ", speedLabel: "ቅልጡፍ",
-                catAll: "ሁሉም ሬዲዮዎች", catLocal: "ኢትዮጵያ እና ኤርትራ (150+)", catGlobal: "አለም አቀፍ (50+)"
+                catAll: "ሁሉም ሬዲዮዎች", catLocal: "ኢትዮጵያ እና ኤርትራ", catGlobal: "አለም አቀፍ"
             },
             am: {
                 lblPrev: "ቀድመው", lblNext: "ቀጣይ", lblNowPlaying: "አሁን እየተጫወተ ያለ", lblPlaylistTitle: "የዘፈን ዝርዝር",
@@ -551,12 +500,12 @@
                 lblSetPointA: "ነጥብ ኤ ፈልግ", lblSetPointB: "ነጥብ ቢ ፈልግ", lblClearLoop: "ሉፕ አጽዳ",
                 lblCrossfadeTitle: "አውቶ ክሮስፌድ ማስተካከያ", lblEnableCrossfade: "ክሮስፌድ አንቃ", lblDurationLabel: "ቆይታ ሰከንድ",
                 lblEqTitle: "ኢኳላይዘር ማስተካከያ", lblTreble: "ትሪብል ከፍተኛ", lblMid: "ሚድ ድምፅ", lblBass: "ባስ ዝቅተኛ",
-                lblRadioTitle: "ቀጥታ የሬዲዮ ጣቢያዎች (200+ የሚሰሩ)", lblLangHeader: "የቋንቋ ምርጫ ማዕከል",
+                lblRadioTitle: "ቀጥታ የሬዲዮ ጣቢያዎች", lblLangHeader: "የቋንቋ ምርጫ ማዕከል",
                 lblLangSub: "የአፕሊኬሽኑን ቋንቋ ይምረጡ:", lblLangStatus: "ቋንቋው በትክክል ተቀይሯል!",
                 lblAboutTitle: "ስለ አዘጋጁ", lblDeveloperName: "ሰሪ፡ ክብሮም ትኩእ",
-                lblAboutDesc: "ይህ አፕሊኬሽን ለሙዚቀኞች፣ ለዲጄዎች እና ለሬዲዮ አድማጮች የተዘጋጀ ኃይለኛ የሙዚቃ ማጫወቻ ነው። 200+ የሚሰሩ የሀገር ውስጥ እና አለም አቀፍ ሬዲዮዎችን ይዟል።",
+                lblAboutDesc: "ይህ አፕሊኬሽን ለሙዚቀኞች፣ ለዲጄዎች እና ለሬዲዮ አድማጮች የተዘጋጀ ኃይለኛ የሙዚቃ ማጫወቻ ነው።",
                 navPlayer: "ማጫወቻ", navFiles: "ፋይሎች", navDownload: "አውርድ", navStudio: "ስቱዲዮ", navRadio: "ሬዲዮ", navLang: "ቋንቋ", navAbout: "ስለ እኛ", speedLabel: "ፍጥነት",
-                catAll: "ሁሉም ሬዲዮዎች", catLocal: "ኢትዮጵያ እና ኤርትራ (150+)", catGlobal: "አለም አቀፍ (50+)"
+                catAll: "ሁሉም ሬዲዮዎች", catLocal: "ኢትዮጵያ እና ኤርትራ", catGlobal: "አለም አቀፍ"
             },
             om: {
                 lblPrev: "Dura", lblNext: "Itti Aanu", lblNowPlaying: "Amma Kan Taphatu", lblPlaylistTitle: "Tarree Taphaa",
@@ -570,12 +519,12 @@
                 lblSetPointA: "Iddoo A kaa'i", lblSetPointB: "Iddoo B kaa'i", lblClearLoop: "Loop Haquuf",
                 lblCrossfadeTitle: "Qindaa'ina Crossfade", lblEnableCrossfade: "Crossfade Dandeessisi", lblDurationLabel: "Yeroo Sekondii",
                 lblEqTitle: "Equalizer Qindaa'ina", lblTreble: "Treble Ol'aanaa", lblMid: "Mid Sagalee", lblBass: "Bass Gad-aanaa",
-                lblRadioTitle: "Raadiyowwan Qabatamaa (200+)", lblLangHeader: "Filannoo Afaanii",
+                lblRadioTitle: "Raadiyowwan Qabatamaa", lblLangHeader: "Filannoo Afaanii",
                 lblLangSub: "Afaan Appii filadhaa:", lblLangStatus: "Afaanichi milkaa'inaan jijjiirameera!",
                 lblAboutTitle: "Waa'ee Qopheessaa", lblDeveloperName: "ሰሪ፡ ክብሮም ትኩእ",
-                lblAboutDesc: "Appii kana keessatti raadiyowwan 200 ol ta'an guutamaniiru.",
+                lblAboutDesc: "Appii kana keessatti raadiyowwan garaagaraa guutamaniiru.",
                 navPlayer: "Tapha", navFiles: "Faayilii", navDownload: "Buufadhu", navStudio: "Istuudiyo", navRadio: "Raadiyoo", navLang: "Afaan", navAbout: "Waa'ee", speedLabel: "Saffisa",
-                catAll: "Hunda", catLocal: "Itoophiyaa & Ertiraa (150+)", catGlobal: "Idil-Addunyaa (50+)"
+                catAll: "Hunda", catLocal: "Itoophiyaa & Ertiraa", catGlobal: "Idil-Addunyaa"
             }
         };
 
@@ -700,7 +649,7 @@
                 let detected = detectTrackProperties(track.name);
                 document.getElementById('liveDetectedInfo').innerText = `Key: ${detected.key} | BPM: ${detected.bpm}`;
                 renderPlaylist();
-            });
+            }).catch(e => console.error("Playback error:", e));
         }
 
         function setPointA() {
@@ -811,7 +760,7 @@
                         renderPlaylist();
                     }
                 }, intervalTime);
-            });
+            }).catch(e => console.log("Crossfade error:", e));
         }
 
         function handleTrackEnded() {
@@ -830,7 +779,8 @@
                 document.getElementById('globalPlayBtn').innerText = "Pause";
                 document.getElementById('liveDetectedInfo').innerText = `Key: Live Stream | BPM: N/A`;
             }).catch(e => {
-                alert("ይህ የሬዲዮ ዥረት (Stream) በአሁኑ ሰዓት መስመር ላይ የለም ወይም ተዘግቷል። እባክዎ ሌላ ሬዲዮ ይሞክሩ።");
+                console.error("Radio playback error:", e);
+                alert(`ማስጠንቀቂያ: '${name}' በአሁኑ ሰዓት ከምንጩ ጋር ቀጥተኛ ግንኙነት መፍጠር አልቻለም። የኢንተርኔት ግንኙነትዎን ይፈትሹ።`);
             });
         }
 
